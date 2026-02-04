@@ -69,6 +69,17 @@
 - Each port is an unsigned 16-bit number (0 to 65535)
 - Port numbers ranging from 0 to 1023 are well-known port numbers and are restricted
 
+### Reliable Data Transfer
+
+- Pipelining is used to avoid poor performance of stop-and-wait protocols and improve the utilization of the sender
+- The sender can start sending any data it has whilst some of it is already in transit instead of waiting
+- Pipelining allows the sender to send multiple packets without waiting for acknowledgements
+- The introduction of pipelining has the following consequences (in comparison with the protocol developed in [rdt](./rdt)):
+    - The range of sequence numbers must be increased since each in-transit packet must have a unique sequence number
+    - The sender and receiver sides may have to buffer more than one packet (at minimum the sender has to buffer packets that have not yet been ack'd)
+    - The range of seq. numbers and buffering requirements will depend on how the protocol responds to lost, corrupted or overly delayed packets
+        - 2 basic approaches to pipelined error recovery can be identified: Go-Back-N and Selective Repeat
+
 ### Segment Stucture
 
 - MTU (Maximum Transmission Unit) is the largest physical packet size that a network interface can handle
@@ -126,4 +137,4 @@
 
 - Used for error detection
 
-### Reliable Data Transfer
+
