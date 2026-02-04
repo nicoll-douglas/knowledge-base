@@ -126,4 +126,4 @@
 
 - Used for error detection
 
-### Timeout/Retransmit
+### Reliable Data Transfer
