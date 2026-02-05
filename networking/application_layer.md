@@ -69,12 +69,12 @@
 
 - Host aliasing:
     - A hostname can also have one or more alias names that map to it (aliases)
-    - The underlying hostname is known as the canonical hostname
+    - The underlying hostname that maps to the IP is known as the canonical hostname
 - Load distribution:
     - Web servers can have multiple replicas with each server running on a different end system
     - For replica web servers, a set of IP addresses is associated with a hostname
     - DNS queries for the hostname are replied with the entire set of IP addresses but the ordering is rotated
-    - Clients typically use the IP address at the top of the list so rotation provides load distributionA
+    - Clients typically use the IP address at the top of the list so rotation provides load distribution
 
 ### DNS Servers
 
@@ -195,7 +195,7 @@
 
 - There are QDCOUNT questions
 - Each question is formed by a QNAME, a QTYPE and a QCLASS
-- The QNAME of a question is a sequence of labels, each label is a sequence of 1-byte ASCII characters
+- The QNAME of a question is a sequence of length-prefixed labels, each label is a sequence of 1-byte ASCII characters
 - The QNAME is terminated by a zero-length label (0x00)
 - The QTYPE is a 16-bit unsigned integer and represents what record is being asked for (A=1, AAAA=28, MX=15, etc.)
 - The QCLASS is a 16-bit unsigned integer, usually 1=IN (Internet)
@@ -220,7 +220,7 @@
 - A DNS zone is a portion of the DNS namespace that a DNS server is authoritative for
 - It contains authoritative A records for the domains it manages
 - It can also contain delegation records (NS records) for child zones
-- A zone file is a file stored at the apex that stores all DNS records for the zone (acting as the database)
+- A zone file is a file stored at the authoritative server that stores all DNS records for the zone (acting as the database)
 - The apex is the topmost domain name in a DNS zone
 
 #### Zone Delegation
@@ -233,7 +233,7 @@
 
 ##### SOA (Start of Authority) Record
 
-- Every DNS zone has exactly one SOA record located at the zone apex
+- Every DNS zone has exactly one SOA record located at the authoritative server for that zone
 - This record tells who is authoritative for the zone, how secondary servers keep the zone in sync and how long to cache negative answers
 
 ##### Visual Example
