@@ -49,6 +49,10 @@
 - Any buffered TCP segments have to wait for the earlier lost segment to be retransmitted
 - Any buffered, contiguous TCP segments that build up into frames ready for processing by HTTP/2 at the application layer also have to wait
 
+#### HTTP/3
+
+- HTTP3 eliminates transport-layer blocking entirely
+
 ## SMTP
 
 - A user agent allows a user to read, reply to, forward, save and compose e-mails

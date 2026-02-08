@@ -11,6 +11,7 @@
 - Segment integrity checking by including error-detection fields in the segment's header
 - Multiplexing/demultiplexing is as simple as specifying the host and destination ports in the headers of a UDP segment
 - When a sender specifies the source port it acts as a "return address"
+- UDP does not provide flow control and if receive buffer at the receiver overflows (segments arrive faster than the application reads) then packet loss occurs at layer 4
 
 ### Segment Structure
 
@@ -80,18 +81,59 @@
     - The range of seq. numbers and buffering requirements will depend on how the protocol responds to lost, corrupted or overly delayed packets
         - 2 basic approaches to pipelined error recovery can be identified: Go-Back-N and Selective Repeat
 
+### Round-Trip Time Estimation and Timeout
+
+- A new value for the sample RTT can be obtained once every RTT (since we get a new approximation / data point)
+- The sample RTT fluctuate between segments due to congestion in routers
+- TCP calculates its timeout using an estimate of the round trip time plus some margin
+- The estimate is calculated using an average such that newer samples of the RTT provide more weight in the average
+- The margin is calculated based on how much the RTT samples vary; when there is a lot of fluctuation, the margin is large, when there isn't any, the margin is small
+- The initial timeout interval is 1 second
+
+### Reliable Data Transfer
+
+- TCP uses a single retransmission timer
+- When data is passed to TCP, a timer is started if there isn't already one running
+- The timeout is associated with the oldest unacknowledged packet
+- When the timeout occurs, TCP retransmits the oldest unacknowledged segment with the smallest sequence number
+- When TCP retransmits it doubles the timeout interval (from what the previous value was)
+- The timer expiration is usually caused by congestion in the network and in times of congestion if the sender continues to retransmit packets persistently the congestion may get worse
+- TCP uses cumulative acknowlegdements so when a new ack. number is received, the value of the sequence number of the oldest unacknowledged byte is updated and the timer restarted (assuming its bigger than what was known)
+- Timeout-triggered retransmissions increase end-to-end delay due to the sender withholding the segment
+- TCP functions like Go-Back-N but instead of resending all unacknowledged packets on timeout it only retransmits the oldest unacknoweldged packet
+- TCP also relies on duplicate ACKs, if three duplicate ACKs then the oldest unacknowledge packet is retransmitted immediately instead of waiting for the timeout
+
+### Flow Control
+
+- TCP senders and receivers each have a send buffer and a receive buffer
+- The send buffer contains data that was sent but not yet acknowledged and kept for the case of retransmission as well as data that TCP is waiting to transmit (waiting for the window to slide up)
+- The receive buffer contains in-order data that was received and that is ready for the application above to read
+- TCP has a flow control service that it provides to its application to prevent the possibility of the sender overflowing the receiver's receive buffer
+- Flow control acts like a speed-matching service that matches the rate at which the sender is sending against the rate at which the receiving application is reading
+- The sender maintains a "receive window" state variable which gives the sender an idea of much free buffer space is available at the receiver
+- The LastByteRead variable is the number of the last byte read from the buffer by the application process
+- The LastByteRcvd variable is the number of the last byte received and placed in the buffer
+- rwnd = RcvBuffer - (LastByteRcvd - LastByteRead); the receive window is the amount of remaining space available in the buffer
+- The rwnd value is placed in the receive window field of the header of every segment that is sent
+- The sender on the other side maintains the LastByteSent and LastByteAcked variables (the difference between them is the amount of unacknowledged data sent into the connection) 
+- By keeping the amount of unacknowledged data less than rwnd, the sender prevents the receive buffer from overflowing on the other side
+- However, if rwnd is 0 and the sender has no more data to send then no data segments or ACKs will be transmitted which stops any future data received from above from being transmitted when space eventually opens up in the receive buffer and the sender has data to send
+- TCP uses a mechanism call Zero Window Probe (ZWP) which starts a persist timer that runs indefinitely when rwnd is 0 to prevent this
+- The sender will send the next byte of data in the sequence after the timer expires (intentionally breaking the rules) to force a response from the receiver with a potential new rwnd value
+- If the window is still 0, the persist timer is restarted and doubles the wait time
+
 ### Segment Stucture
 
-- MTU (Maximum Transmission Unit) is the largest physical packet size that a network interface can handle
+- MTU (Maximum Transmission Unit) is the largest physical packet size that a network interface (e.g ethernet cable) can handle
 - The standard size for ethernet networks is 1500 bytes which is the size of an Ethernet frame's payload (an IP packet)
 - MSS (Maximum Segment Size) is the largest amount of application data that TCP can handle in a single segment
 - MSS is usually 1460 bytes since the IP header is 20 bytes and the TCP header is 20 bytes
 
-#### 1. Source Port
+#### 1. Source Port (16 bits)
 
 - 16 bits for the source port (0 to 65535)
 
-#### 2. Destination Port
+#### 2. Destination Port (16 bits)
 
 - 16 bits for the destination port (0 to 65535)
 
@@ -102,6 +144,7 @@
 - The bytes will be numbered from 0 to 499,999 and the sequence number will be the byte's number for where the segment starts (0, 1000, 2000, etc.)
 - Sequence numbers increase by the payload size sent in that packet (so if current seq. is 0 and you send a packet of 1000 bytes, current seq. becomes 1000)
 - Both sides choose a random initial sequence number which is done to minimize the possibility that a segment still present in the network from an earlier already-terminated connection is mistaken for a valid segment in a later connection
+- Sequence numbers range from 0 to about 4 billion (4GB); when the max is reached the sequence number wraps around back to 0
 
 #### 4. Acknowledgement Number (32 bits)
 
@@ -114,12 +157,12 @@
     - Seg C arrives at receiver, receiver sees out of order packet, buffers it but ACKs 101 (asking again for 101 because it cannot ACK seg C yet)
     - The sender receives a duplicate ACK and realizes 101 is missing at the receiver and retransmits it
 - Acknowledgement numbers increase by the number of bytes received in an in-order payload from the other side
-- Each time a sender or receiver receives a segment, the header acts as a status report saying "here is the next chunk of my data (seq), and by the way, I have successfully received everything of yours up to this point (ack)"
-- ACKs often piggyback on data being sent if the client and server are both exchaning data simulataneously
+- ACKs often piggyback on data being sent if the client and server are both exchanging data simulataneously
 
 #### 5. Header Length (4 bits)
 
 - Tells the receiver the length of the header in 32-bit words
+- A TCP header can have variable length due to the options field however it is usually empty making the header 20 bytes and the length field 0101 (5 32-bit words e.g 5 x 4 bytes = 20)
 
 #### 6. Flags (9 bits)
 
