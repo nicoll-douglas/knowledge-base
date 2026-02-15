@@ -41,25 +41,21 @@
 
 ## TCP
 
-### Services Provided by TCP
+### Overview
 
-- Process-to-process data delivery
-- Reliable data transfer ensuring data is correct and in order
-- Congestion control (a service provided not so much to the application but to the internet as a whole)
-
-### Multiplexing and Demultiplexing
+#### Multiplexing and Demultiplexing
 
 - Refers to extending the host-to-host delivery service to a process-to-process delivery service for applications running on the hosts
 - The transport-layer in the receiving host doesn't deliver data directly to the process but to an intermediary socket (the OS's networking API)
 - Each transport-layer segment has a set of fields in the segment for this purpose
 - Multiplexing and demultiplexing also happen at other layers of the OSI model whenever a protocol in the layer is used by other protocols higher up
 
-#### Demultiplexing
+##### Demultiplexing
 
 - In a receiving host, the transport layer examines the fields a transport-layer segment in order to identify the receiving socket and then directs the segment to that socket
 - Ths job of delivering the data in a transport-layer segment to the correct socket is called demultiplexing
 
-#### Multiplexing
+##### Multiplexing
 
 - The job of gathering data chunks passed to the transport-layer at the source host, encapsulating each chunk with header information to create segments, and passing the segments to the network layer is called multiplexing
 
@@ -70,7 +66,14 @@
 - Each port is an unsigned 16-bit number (0 to 65535)
 - Port numbers ranging from 0 to 1023 are well-known port numbers and are restricted
 
-### Reliable Data Transfer
+### Services Provided by TCP
+
+- Process-to-process data delivery
+- Reliable data transfer ensuring data is correct and in order
+- Congestion control (a service provided not so much to the application but to the internet as a whole)
+- Flow control (regulating the rate at which data is transferred to help the receiver not be overloaded)
+
+#### Reliable Data Transfer
 
 - Pipelining is used to avoid poor performance of stop-and-wait protocols and improve the utilization of the sender
 - The sender can start sending any data it has whilst some of it is already in transit instead of waiting
@@ -81,16 +84,7 @@
     - The range of seq. numbers and buffering requirements will depend on how the protocol responds to lost, corrupted or overly delayed packets
         - 2 basic approaches to pipelined error recovery can be identified: Go-Back-N and Selective Repeat
 
-### Round-Trip Time Estimation and Timeout
-
-- A new value for the sample RTT can be obtained once every RTT (since we get a new approximation / data point)
-- The sample RTT fluctuate between segments due to congestion in routers
-- TCP calculates its timeout using an estimate of the round trip time plus some margin
-- The estimate is calculated using an average such that newer samples of the RTT provide more weight in the average
-- The margin is calculated based on how much the RTT samples vary; when there is a lot of fluctuation, the margin is large, when there isn't any, the margin is small
-- The initial timeout interval is 1 second
-
-### Reliable Data Transfer
+##### TCP Implementation
 
 - TCP uses a single retransmission timer
 - When data is passed to TCP, a timer is started if there isn't already one running
@@ -101,9 +95,18 @@
 - TCP uses cumulative acknowlegdements so when a new ack. number is received, the value of the sequence number of the oldest unacknowledged byte is updated and the timer restarted (assuming its bigger than what was known)
 - Timeout-triggered retransmissions increase end-to-end delay due to the sender withholding the segment
 - TCP functions like Go-Back-N but instead of resending all unacknowledged packets on timeout it only retransmits the oldest unacknoweldged packet
-- TCP also relies on duplicate ACKs, if three duplicate ACKs then the oldest unacknowledge packet is retransmitted immediately instead of waiting for the timeout
+- TCP also relies on duplicate ACKs, if three duplicate ACKs are received then the oldest unacknowledged packet is retransmitted immediately instead of waiting for the timeout (fast retransmit)
 
-### Flow Control
+###### Round-Trip Time Estimation and Timeout
+
+- A new value for the sample RTT can be obtained once every RTT (since we get a new approximation / data point)
+- The sample RTT fluctuate between segments due to congestion in routers
+- TCP calculates its timeout using an estimate of the round trip time plus some margin
+- The estimate is calculated using an average such that newer samples of the RTT provide more weight in the average
+- The margin is calculated based on how much the RTT samples vary; when there is a lot of fluctuation, the margin is large, when there isn't any, the margin is small
+- The initial timeout interval is 1 second
+
+#### Flow Control
 
 - TCP senders and receivers each have a send buffer and a receive buffer
 - The send buffer contains data that was sent but not yet acknowledged and kept for the case of retransmission as well as data that TCP is waiting to transmit (waiting for the window to slide up)
@@ -121,6 +124,73 @@
 - TCP uses a mechanism call Zero Window Probe (ZWP) which starts a persist timer that runs indefinitely when rwnd is 0 to prevent this
 - The sender will send the next byte of data in the sequence after the timer expires (intentionally breaking the rules) to force a response from the receiver with a potential new rwnd value
 - If the window is still 0, the persist timer is restarted and doubles the wait time
+
+#### Congestion Control
+
+##### Costs of Congeston
+
+- As packet arrival rate nears link capacity, large queueing delays are experienced
+- As packet loss occurs, the sender has to perform retransmissions
+- If a network is congested and experiencing large queueing deleays, the sender may timeout and retransmit the packet when it is unneeded
+- When a packet is dropped along a path, the transmission capacity used at each upstream link was wasted
+
+### Connection Management
+
+#### Opening a Connection 
+
+##### Step 1 - Send SYN
+
+- The client sends a data-less TCP segment with the SYN flag set to 1 in the header
+- The client also adds the randomly chosen initial sequence number to the header
+
+##### Step 2 - Receive SYN, Send SYNACK
+
+- The receiver receives the SYN segment and allocates the TCP buffers and variables to the connection
+- A connection-granted (SYNACK) segment is then sent to the client
+- The SYN bit here is set to 1
+- The ACK number here is set to the client's initial sequence number + 1
+- The server also adds its randomly chosen initial sequence number to the header
+
+##### Step 3 - Receive SYNACK
+
+- When the client receives the SYNACK segment, it also allocates variables and buffers to the connection
+- The client then sends another segment to the server with the ACK number set to the  server's initial sequence number + 1 (acknowledging the connection-granted SYNACK segment)
+- Here the SYN bit is set to 0 since the connection is established
+- This segment may contain application data in the payload
+
+#### Closing a Connection
+
+- Because TCP is full-duplex, each direction of the connection must be closed independently
+
+##### Step 1 - Client FIN
+
+- The client sends a segment with the FIN flag set to 1 (when the client has no more data to send)
+- The client then enters the FIN-WAIT-1 state (waiting for the ACK)
+
+##### Step 2 - Server FINACK
+
+- The server then responds with an ACK acknowledging that the client wants to close the connection
+- The server then enters the CLOSE-WAIT state and the client enters the FIN-WAIT-2 state
+
+##### Step 3 - Server FIN
+
+- The server sends a segment with the FIN flag set to 1 (when the server has no more data to send)
+- The server then enters the LAST-ACK state
+
+##### Step 4 - Client FINACK
+
+- The client then responds with an ACK acknowledging that the server wants to close the connection
+- The client then enters a TIME-WAIT state (safety buffer)
+- The server receives this ACK and immediately closes the connection (enters the CLOSED state)
+- In the TIME-WAIT state the client enters a wait period (usually twice the maximum segment lifetime)
+- This is done for reliability i.e if the client's FINACK gets lost there is a window for the server to resend its FIN and the ACK to be resent
+- This also allows wandering packets from the old connection to die off in the network, preventing a new connection using the same port numbers from accidentally receiving a delayed packet from the old connection
+- If the last ACK has to be retransmitted the TIME-WAIT timer is restarted
+
+#### RST
+
+- If a server host receives a TCP SYN segment but the host is not listening for TCP connections on the target port, the host will then send a segment with the RST flag set to 1
+- It tells the sender that it is not accepting TCP connections on that port
 
 ### Segment Stucture
 
