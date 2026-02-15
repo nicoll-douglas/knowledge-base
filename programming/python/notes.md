@@ -1,13 +1,50 @@
 # Python
 
+- [Variables](#variables)
+  - [Naming Rules](#naming-rules)
+  - [Referencing](#referencing)
+  - [Mutability](#mutability)
+  - [Integer Caching](#integer-caching)
+- [Data Types](#data-types)
+  - [Numeric Types](#numeric-types)
+    - [Integers (`int`)](#integers-int)
+    - [Floats (`float`)](#floats-float)
+    - [Complex Numbers (`complex`)](#complex-numbers-complex)
+  - [Sequence Types](#sequence-types)
+    - [Slicing](#slicing)
+    - [Operators](#operators)
+    - [Strings (`str`)](#strings-str)
+      - [Escaping & Formatting](#escaping-formatting)
+    - [Lists (`list`)](#lists-list)
+      - [Packing & Unpacking](#packing-unpacking)
+    - [Tuples (`tuple`)](#tuples-tuple)
+      - [Packing & Unpacking](#packing-unpacking-1)
+    - [Ranges (`range`)](#ranges-range)
+    - [Bytes (`bytes`)](#bytes-bytes)
+      - [Slicing](#slicing-1)
+    - [Byte Array (`bytearray`)](#byte-array-bytearray)
+  - [Mapping & Set Types](#mapping-set-types)
+    - [Operators](#operators-1)
+    - [Dictionaries (`dict`)](#dictionaries-dict)
+    - [Sets (`set`)](#sets-set)
+      - [Operators](#operators-2)
+    - [Frozen Sets (`frozenset`)](#frozen-sets-frozenset)
+      - [Operators](#operators-3)
+  - [Unary Types](#unary-types)
+    - [None (`NoneType`)](#none-nonetype)
+    - [Booleans (`bool`)](#booleans-bool)
+- [Built-ins](#built-ins)
+  - [Functions](#functions)
+
 ## Variables
 
-### Naming Rules
+### General Rules
 
 - Can contain numbers, letters and underscores
 - Must start with a letter or underscore
 - Convention for naming is lower case snake case
 - Constants are usually uppercase
+- Can be assigned in parallel (e.g `x, y, z = 1, 2, 3`)
 - See [PEP 8](https://peps.python.org/pep-0008/) for more
 
 ### Referencing
@@ -180,7 +217,7 @@ a, b = b, a # does the same
 
 #### Bytes (`bytes`)
 
-- An immutable sequence of bytes
+- An immutable sequence of bytes which is just a sequence of numbers from 0 to 255
 - Created by prefixing an ASCII string with the `b` prefix (e.g `b"Hello world"`)
 
 ##### Slicing
@@ -240,3 +277,7 @@ a, b = b, a # does the same
 
 - Either `True` or `False`
 - Secretly an integer under the hood (something like `True + True` gives `2`, `isinstance(True, int)` gives `True`, etc)
+
+## Built-ins
+
+### Functions
