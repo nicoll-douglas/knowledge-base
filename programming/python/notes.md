@@ -88,6 +88,10 @@ a = a + 1 # 'a' now labels a new int object that was created; 'b' still points t
 
 ### Numeric Types
 
+- All inherit from `numbers.Number`
+- Integer types inherit from `numbers.Integral`
+- Float types inherit from `numbers.Real`
+
 #### Integers (`int`)
 
 - Can use underscores as visual separators (e.g `1_000_000`)
@@ -114,6 +118,20 @@ float('nan') # not a number, used for undefined results such as 0.0 / 0.0; nan i
 
 ### Sequence Types
 
+- All inherit from `Iterable`
+- All inherit from `Collection` (combines `Iterable`, `Container` (in), `Sized` (len))
+- All inherit from `Sequence` (adds indexing and slicing)
+- Mutable sequence types extend `MutableSequence`
+- Immutable sequence types extend `ImmutableSequence`
+- The above are in `collections.abc`
+
+#### Operators
+
+- Sequence types share some common operators
+- Addition (`+`) concatenates two sequences into one and returns a new sequence
+- Multiplication (`*`) repeats the sequence, creating a new one of the tuple N times (e.g `(0, 2) * 2 == (0, 2, 0, 2)`)
+- With multiplication for lists and tuples, the references inside them are replicated
+
 #### Slicing
 
 - Sequences can be sliced with the `[start:stop:step]` syntax
@@ -134,41 +152,16 @@ nums[::-1]    # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0], start at 9, take 1 backwards unt
 nums[8:2:-2]  # [8, 6, 4], start at 8, take 8, skip 7, take 6, skip 5, take 4, skip 3
 ```
 
-- Some sequence types are read-only (which makes sense as they are also immutable types):
-  - `str`
-  - `tuple`
-  - `range`
-  - `bytes`
-- Lists and byte arrays allow slice assignment
-- Slice assignment allows you to delete or replace chunks of data in-place
+#### Mutable Sequences
 
-#### Operators
+- Allow slice assignemt and use of the `del` operator
 
-- Sequence types share some common operators
-- Addition (`+`) concatenates two sequences into one and returns a new sequence
-- Multiplication (`*`) repeats the sequence, creating a new one of the tuple N times (e.g `(0, 2) * 2 == (0, 2, 0, 2)`)
-- With multiplication for lists and tuples, the references inside them are replicated
-
-#### Strings (`str`)
-
-- Unicode text (a sequence of bytes under the hood)
-- Can wrap strings using single quotes, double quotes or triple quotes (`'''` or `"""`) which is used for multi-line strings and preserving line breaks exactly as typed
-
-##### Escaping & Formatting
-
-- Backslash is an escape character
-- Using the `r` prefix lets you create a raw string where backslashes are just backslashes (e.g `r"C:\Users\jiggy"`)
-- Using the `f` prefix (f-string) lets you inline variables and python code inside curly braces
-- Using the `b` prefix changes the data type of the string to `bytes`
-- Each character is restricted to a single byte (ASCII)
-- You can combine some of the prefixes (e.g fr/rf and rb/br, fb is not allowed)
-
-#### Lists (`list`)
+##### Lists (`list`)
 
 - Mutable, ordered collection of heterogeneous items
 - Wrapped in square brackets (e.g `[1, 2, 3]`)
 
-##### Packing & Unpacking
+###### Packing & Unpacking
 
 - Can extract values from a list into variables (unpacking)
 - The \* star operator unpacks the rest of the items into a new list
@@ -185,7 +178,28 @@ first, *middle, last = [1, 2, 3, 4]
 # last = 4
 ```
 
-#### Tuples (`tuple`)
+##### Byte Array (`bytearray`)
+
+- Must be created with the `bytearray()` built-in
+- Behaves the same as `bytes` except the fact that it is mutable
+
+#### Immutable Sequences
+
+##### Strings (`str`)
+
+- Unicode text (a sequence of bytes under the hood)
+- Can wrap strings using single quotes, double quotes or triple quotes (`'''` or `"""`) which is used for multi-line strings and preserving line breaks exactly as typed
+
+###### Escaping & Formatting
+
+- Backslash is an escape character
+- Using the `r` prefix lets you create a raw string where backslashes are just backslashes (e.g `r"C:\Users\jiggy"`)
+- Using the `f` prefix (f-string) lets you inline variables and python code inside curly braces
+- Using the `b` prefix changes the data type of the string to `bytes`
+- Each character is restricted to a single byte (ASCII)
+- You can combine some of the prefixes (e.g fr/rf and rb/br, fb is not allowed)
+
+##### Tuples (`tuple`)
 
 - An immutable, ordered collection of items (basically just an immutable list)
 - Wrapped in round brackets (e.g `(1, 2, 3)`)
@@ -198,7 +212,7 @@ b = (5,)       # trailing comma lets you create a tuple of length 1 and avoids t
 c = (1, 2, 3,) # this is also valid
 ```
 
-##### Packing & Unpacking
+###### Packing & Unpacking
 
 - You can unpack tuples the same way you can with lists
 
@@ -211,32 +225,25 @@ a, b = (b, a) # swaps a and b
 a, b = b, a # does the same
 ```
 
-#### Ranges (`range`)
+##### Ranges (`range`)
 
 - An immutable sequence of numbers usually used for looping; stores only the start stop and step values
 
-#### Bytes (`bytes`)
+##### Bytes (`bytes`)
 
 - An immutable sequence of bytes which is just a sequence of numbers from 0 to 255
 - Created by prefixing an ASCII string with the `b` prefix (e.g `b"Hello world"`)
 
-##### Slicing
+###### Slicing
 
 - Slicing returns a new `bytes` object which is the default slicing behaviour
 - Indexing returns an `int` which is the ASCII code of the character that was accessed (not the expected default behaviour)
 
-#### Byte Array (`bytearray`)
+### Mapping Types
 
-- Must be created with the `bytearray()` built-in
-- Behaves the same as `bytes` except the fact that it is mutable
-
-### Mapping & Set Types
-
-#### Operators
-
-- Mapping and set types share some common operators
-- The pipe (`|`) operator updates items of the first operand with the keys of the second operand and returns a new object
-- If using augmented assignment with the pipe operator (`|=`) the object is updated in place otherwise if the type of the object is mutable (i.e `set`, `dict`) otherwise a new object is created (i.e `frozenset`)
+- All inherit from `Iterable`, `Collection` and `Mapping`
+- `Mapping` provides read-only mapping logic (`getitem()`, `keys()`, etc)
+- `dict` inherits from `MutableMapping` (adds write access: `setitem()`, `delitem()`, `del` operator, etc)
 
 #### Dictionaries (`dict`)
 
@@ -244,25 +251,38 @@ a, b = b, a # does the same
 - Keys must be hashable (immutable types like strings, numbers or tuples)
 - Values can be anything
 
-#### Sets (`set`)
+### Set Types
+
+- All inherit from `Iterable`, `Collection` and `Set`
+- `Set` defines read-only set logic (operators)
+- `set` inherits from `MutableSet` adding methods to mutate the set (`add()`, `pop()`, etc)
+- `frozenset` inherits directly from `Set`
+
+#### Operators
+
+- Mapping and set types share some common operators
+- The pipe (`|`) operator updates items of the first operand with the keys of the second operand and returns a new object
+- If using augmented assignment with the pipe operator (`|=`) the object is updated in place otherwise if the type of the object is mutable (i.e `set`, `dict`) otherwise a new object is created (i.e `frozenset`)
+
+##### Sets (`set`)
 
 - Mutable, unordered collection of unique items; wrapped in curly brackets (e.g `{1, 2, 3}`)
 - Sets use hashing to stay fast so only immutable items are allowed inside sets
 - Empty curly brackets (`{}`) create an emtpy dictionary; the `set()` built-in must be used to create an empty set
 
-##### Operators
+###### Operators
 
 - `a & b` - Returns the intersection of `a` and `b`
 - `a - b` - Returns the set difference between `a` and `b`
 - `a ^ b` - Returns the set of items in `a` or `b` but not `both`
 - `a | b` - Returns the union of `a` and `b`
 
-#### Frozen Sets (`frozenset`)
+##### Frozen Sets (`frozenset`)
 
 - Immutable version of a set
 - Must be constructed using the `frozenset()` built-in
 
-##### Operators
+###### Operators
 
 - Supports the same operators as sets
 
@@ -278,6 +298,85 @@ a, b = b, a # does the same
 - Either `True` or `False`
 - Secretly an integer under the hood (something like `True + True` gives `2`, `isinstance(True, int)` gives `True`, etc)
 
-## Built-ins
+## Type Casting
 
-### Functions
+### Truthy vs Falsy
+
+Falsy values:
+
+- `None`
+- `False`
+- `0`
+- `0.0`
+- `""`
+- `[]`, `set()`, `()`, `{}`
+
+All other values are truthy.
+
+## Conditionals
+
+### Match-Case
+
+- Uses structural pattern matching
+- The match variable can be a literal like `True` or `None` or `2`
+- Compares with `is` for literals (`True`, `False`, `None`) and `==` for everything else
+- If you use a variable in a case value, it is a capture pattern so it will assign the match value to the variable name and then use perform pattern matching on the case value
+- Default case is represented by `case _`
+- Can use the `|` operator to combine cases
+- Doesn't support logical comparisons or operations
+- Can use class matching with things like `int()`
+
+Examples:
+
+```python
+match x:
+  # matches an int, puts it in n, then checks > 5
+  case int(n) if n > 5:
+    print("x greater than 5")
+  case n if n > 2: # matches > 2
+    print("x greater than 2")
+  case _:
+    # _ = x here
+    print("less than 2")
+
+match [1, 2, 3]:
+  # matches list with 3-items with first being 1
+  case [1, y, z]:
+    print(y) # 2
+    print(z) # 2
+
+match day:
+  # matches sat or sun
+  case "Saturday" | "Sunday":
+    print("Weekend")
+  case _:
+    print("Weekday")
+```
+
+### Is
+
+- The `is` keywords if two things point to the same object in memory
+- `==` checks if values are the same
+- The negation is `is not`
+
+### In
+
+- Checks if a value exists in an iterable
+- For strings, it checks if it is a substring
+- For dictionaries, it checks keys
+- The negation is `not is`
+
+## Loops
+
+- You can use `else` blocks with loops
+- The `else` block runs if the loop exited normally (it did not break)
+
+Example:
+
+```python
+for n in [1, 2, 3]:
+    if n == 5:
+        break
+else:
+    print("5 was never found!") # This runs because the loop finished naturally.
+```

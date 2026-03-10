@@ -170,8 +170,57 @@ _**divmod(a: float , b: float) -> tuple[float, float]**_
 - Returns a tuple containing the quotient and remainder as a result of dividing the two given numbers
 - Is more efficient thatn using `//` and `%` separately because division logic is only performed once
 
+### enumerate
+
+_**enumerate(iterable: Iterable, start: int = 0) -> Iterator[tuple[int, T]]**_
+
+- Returns an enumerate object
+- The `__next__` method of the iterator returned by the `enumerate()` returns a tuple containing the index (`int`) and the value obtained from iterating over the iterable (iterable of item type `T`)
+- `start` argument:
+  - Changes the starting index (defaults to 0)
+
+Example:
+
+```python
+# 2: a
+# 3: b
+# 4: c
+for index, item in enumerate(["a", "b", "c"], start=2):
+  print(f"{index}: {item}")
+```
+
+### filter
+
+_**filter(function: Callable[[T], bool], iterable: Iterable[T]) -> Iterator[T]**_
+
+- Returns an iterator that constructs elements from the given iterable such that when calling the given function with the element it returns `True`
+
+### float
+
+_**class float(float | int | string = 0.0)**_<br>
+
+- Construct a float from the given number or string
+- First argument:
+  - If a string, should look like a number
+  - If none given, return value defaults to `0.0`
+
+Examples:
+
+```python
+float("+1.23") # 1.23
+float("   -12345\n") # -12345.0
+float("1e-003") # 0.001
+float("+1E6") # 1000000.0
+float("-Infinity") # -inf
+float("nan") # nan
+```
+
+### format
+
 ## Others
 
 - `breakpoint`
 - `compile`
 - `complex`
+- `eval`
+- `exec`
