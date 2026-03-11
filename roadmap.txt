@@ -1,0 +1,44 @@
+Q1, JAN 1 - MAR 31
+
+- Routine:
+    - Linux (daily)
+    - Networking (daily)
+    - Portuguese (daily)
+    - Python (weekly)
+    - C (weekly)
+    - Summer job applications (daily)
+
+Q2, APR 1 - JUN 31
+
+- Routine:
+    - Linux (daily)
+    - Networking (daily)
+    - Portuguese (daily)
+    - Python (weekly)
+    - C (weekly)
+    - Summer job applications (daily)
+- Goals:
+    - Finish networking book
+    - Get summer job
+- Next steps:
+    - Study for CCNA
+    - Start doing GNS3 labbing
+    - Start neteng homelabbing
+
+Q3, JUL 1 - SEP 31
+
+- Routine:
+    - Linux (daily)
+    - Networking (daily)
+    - Portuguese (daily)
+    - Python (weekly)
+    - C (weekly)
+    - Work
+- Goals:
+    - Take CCNA
+
+Q4, OCT 1 - DEC 31
+
+Goals:
+    - Neteng internship applications
+    - Neteng work placement applications
