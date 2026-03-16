@@ -10,11 +10,11 @@
 - The TCP socket on the recieving side will not deliver bytes to the application until all earlier bytes are present
 - TCP will only deliver a contiguous prefix of the byte stream to the application
 - Example:
-    - A receiving side receives segments 2, 3, and 4
-    - It notices segment 1 is missing
-    - Then, it will request retransmission of segment 1 and won't deliver 2, 3, and 4 to the application
-    - Even though most data has arrived, TCP will wait and buffer it until all previous data has arrived
-    - This is transport-layer head-of-line blocking
+  - A receiving side receives segments 2, 3, and 4
+  - It notices segment 1 is missing
+  - Then, it will request retransmission of segment 1 and won't deliver 2, 3, and 4 to the application
+  - Even though most data has arrived, TCP will wait and buffer it until all previous data has arrived
+  - This is transport-layer head-of-line blocking
 
 ### Application Layer
 
@@ -45,9 +45,9 @@
 - It also breaks down its messages into frames at the application layer
 - Each frame is given the stream ID for the respective request/response
 - HTTP/2 takes frames from multiple streams and passes them to a TCP socket, interleaving them based on priority and flow control
-- If packet loss occurs, HOL blocking still occurs at the transport and application layers
+- If packet loss occurs, HOL blocking still occurs at the transport layer
 - Any buffered TCP segments have to wait for the earlier lost segment to be retransmitted
-- Any buffered, contiguous TCP segments that build up into frames ready for processing by HTTP/2 at the application layer also have to wait
+- Any buffered, contiguous TCP segments that build up into frames ready for processing by HTTP/2 at the application layer also have to wait (this is blocking still at the transport-level, not application level)
 
 #### HTTP/3
 
@@ -72,13 +72,13 @@
 ### Services Provided by DNS
 
 - Host aliasing:
-    - A hostname can also have one or more alias names that map to it (aliases)
-    - The underlying hostname that maps to the IP is known as the canonical hostname
+  - A hostname can also have one or more alias names that map to it (aliases)
+  - The underlying hostname that maps to the IP is known as the canonical hostname
 - Load distribution:
-    - Web servers can have multiple replicas with each server running on a different end system
-    - For replica web servers, a set of IP addresses is associated with a hostname
-    - DNS queries for the hostname are replied with the entire set of IP addresses but the ordering is rotated
-    - Clients typically use the IP address at the top of the list so rotation provides load distribution
+  - Web servers can have multiple replicas with each server running on a different end system
+  - For replica web servers, a set of IP addresses is associated with a hostname
+  - DNS queries for the hostname are replied with the entire set of IP addresses but the ordering is rotated
+  - Clients typically use the IP address at the top of the list so rotation provides load distribution
 
 ### DNS Servers
 
@@ -129,20 +129,20 @@
 
 - DNS servers store resource records (RRs)
 - A resource record contains 4 fields: name, value, type and TTL
-- MX records allows a company to use the same aliased hostname for its mail server and one of its other servers
+- MX records allows a company to point a hostname to another hostname of a mail server that handles mail for the original hostname
 - If a DNS server is authoritative it will contain A records for the hostname
 - If a server is not authoritative it will contain NS records for the domain that includes the hostname (a delegation)
 - It may also contain an A record that provides the IP address of that nameserver (glue)
 - Registrars enter DNS records into the DNS database
-- When registering a domain with a registrar, you have to provide the authoritative name servers
+- When registering a domain with a registrar, you have to provide the authoritative name servers (your provider may also provide them for you)
 - The registrar will then propagate an NS record and an A record into all of the servers for the respective TLD
 
-| Type  | Name                               | Value                                                                       | 
-| ----- | ---------------------------------- | --------------------------------------------------------------------------- |
-| A     | A hostname for an IP address       | The IP address                                                              |
-| NS    | A domain (e.g foo.com)             | The hostname of an authoritative name server that can resolve the domain    |
-| CNAME | An alias hostname                  | The canonical hostname for the alias hostname                               |
-| MX    | An alias hostname                  | The canonical hostname for the alias hostname of a mail server              |
+| Type  | Name                         | Value                                                                    |
+| ----- | ---------------------------- | ------------------------------------------------------------------------ |
+| A     | A hostname for an IP address | The IP address                                                           |
+| NS    | A domain (e.g foo.com)       | The hostname of an authoritative name server that can resolve the domain |
+| CNAME | An alias hostname            | The canonical hostname for the alias hostname                            |
+| MX    | An alias hostname            | The canonical hostname for the alias hostname of a mail server           |
 
 ### DNS Message Structure
 
@@ -163,16 +163,16 @@
 
 ##### 2. Flags (2 bytes)
 
-| Flag Name | Length | Description                                                                              |
-| --------- | ------ | ---------------------------------------------------------------------------------------- |
-| QR        | 1 bit  | Query/Response: 0 = query, 1 = response                                                  | 
-| Opcode    | 4 bits | Operation code: 0 = Standard query, other codes                                          | 
-| AA        | 1 bit  | Authoritative Answer: (response only) Server is the authoritative server of a hostname   |
-| TC        | 1 bit  | Truncated: 1 = Message was too large for UDP and was cut off                             |
-| RD        | 1 bit  | Recursion Desired: The server should perform recursive resolution                        |
-| RA        | 1 bit  | Recursion Available: (response only) Server supports recursion                           |
-| Z         | 3 bits | Reserved: Must be 0, reserved for DNSSEC and future features                             |
-| RCODE     | 4 bits | Response Code: 0 = No error, 3 = Name error (NXDOMAIN), other codes                      |
+| Flag Name | Length | Description                                                                            |
+| --------- | ------ | -------------------------------------------------------------------------------------- |
+| QR        | 1 bit  | Query/Response: 0 = query, 1 = response                                                |
+| Opcode    | 4 bits | Operation code: 0 = Standard query, other codes                                        |
+| AA        | 1 bit  | Authoritative Answer: (response only) Server is the authoritative server of a hostname |
+| TC        | 1 bit  | Truncated: 1 = Message was too large for UDP and was cut off                           |
+| RD        | 1 bit  | Recursion Desired: The server should perform recursive resolution                      |
+| RA        | 1 bit  | Recursion Available: (response only) Server supports recursion                         |
+| Z         | 3 bits | Reserved: Must be 0, reserved for DNSSEC and future features                           |
+| RCODE     | 4 bits | Response Code: 0 = No error, 3 = Name error (NXDOMAIN), other codes                    |
 
 ##### 3. QDCOUNT (2 bytes)
 
@@ -199,7 +199,7 @@
 
 - There are QDCOUNT questions
 - Each question is formed by a QNAME, a QTYPE and a QCLASS
-- The QNAME of a question is a sequence of length-prefixed labels, each label is a sequence of 1-byte ASCII characters
+- The QNAME of a question is a sequence of labels, each label is a sequence of 1-byte ASCII characters prefixed by a length byte indicating the length of the label (characters only)
 - The QNAME is terminated by a zero-length label (0x00)
 - The QTYPE is a 16-bit unsigned integer and represents what record is being asked for (A=1, AAAA=28, MX=15, etc.)
 - The QCLASS is a 16-bit unsigned integer, usually 1=IN (Internet)
@@ -211,13 +211,13 @@
 
 ##### Common Response Scenarios
 
-| Scenario              | Description                                                                | Answer Section                       | Authority Section         | Additional Section            |
-| --------------------- | -------------------------------------------------------------------------- | ------------------------------------ | ------------------------- | ----------------------------- |
-| Successful lookup     | Server is authoritative for the name and record type                       | Requestd RRs                         |                           | Optional helper RRs           |
-| CNAME                 | Queried name is an alias and points to another name that must be resolved  | CNAME record (and possible final RR) |                           | Optional helper RRs           |
-| Delegation (referral) | Server is not authoritative and tells resolver where to ask next           |                                      | NS records for child zone | Potential glue records for NS |
-| NXDOMAIN              | Queried name doesn't exist in the authoritative zone                       |                                      | SOA of authoritative zone |                               |
-| NODATA                | The name exists but the requestd record type doesn't                       |                                      | SOA of authoritative zone |                               |
+| Scenario              | Description                                                               | Answer Section                       | Authority Section         | Additional Section            |
+| --------------------- | ------------------------------------------------------------------------- | ------------------------------------ | ------------------------- | ----------------------------- |
+| Successful lookup     | Server is authoritative for the name and record type                      | Requestd RRs                         |                           | Optional helper RRs           |
+| CNAME                 | Queried name is an alias and points to another name that must be resolved | CNAME record (and possible final RR) |                           | Optional helper RRs           |
+| Delegation (referral) | Server is not authoritative and tells resolver where to ask next          |                                      | NS records for child zone | Potential glue records for NS |
+| NXDOMAIN              | Queried name doesn't exist in the authoritative zone                      |                                      | SOA of authoritative zone |                               |
+| NODATA                | The name exists but the requestd record type doesn't                      |                                      | SOA of authoritative zone |                               |
 
 ### DNS Zones
 
