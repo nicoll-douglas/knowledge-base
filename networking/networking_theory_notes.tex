@@ -1,0 +1,1136 @@
+\documentclass{article}
+
+\title{Networking Theory Notes}
+\author{Nicoll Douglas}
+
+\usepackage{float}
+
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+\usepackage{xcolor}
+\definecolor{linkColor}{RGB}{0, 102, 204}
+
+\usepackage[colorlinks=true]{hyperref}
+\hypersetup{
+    linkcolor=linkColor
+}
+\usepackage{hyperref}
+\usepackage[toc]{glossaries}
+
+\makeglossaries
+\loadglsentries{glossary.tex}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Computer Networks and The Internet}
+
+\subsection{Packet Switching}
+
+\begin{itemize}
+    \item \Gls{packetswitching} is a method of transmitting data through a network by breaking it up into small units called packets.
+    \item Each packet is sent independently through the network and may take different paths to reach the destination, where the packets are reassembled into the original message.
+    \item Network application exchange messages with each other which are broken down into packets at the source.
+    \item Between source and destination, packets travel through communication links and packet switches (routers and link-layer switches mainly).
+    \item Packets are transmitted over each link at a rate equal to the full transmission rate of the link.
+\end{itemize}
+
+\subsubsection{Store-and-Forward Transmission}
+
+\begin{itemize}
+    \item \Gls{storeandforward} transmission means that packet switches must receive an entire packet before it can transmit the first bit of the packet onto the outbound link.
+    \item Packet switches do this because they need to process data in the packet in order to forward it to the correct place.
+\end{itemize}
+
+\subsubsection{Packet Queueing}
+
+\begin{itemize}
+    \item Each outbound link of a packet switch has an output buffer (queue) which stores packets the switch will send out of that link.
+    \item If a packet arrives at the queue but there are other packets in front, it will suffer a queueing delay.
+    \item If an output buffer is full, packet loss will occur as any incoming packets will be dropped.
+\end{itemize}
+
+\subsection{Circuit Switching}
+
+\begin{itemize}
+    \item Circuit switching is a method of transmitting data through a network by creating a dedicated path or circuit from one endpoint to another for the entire duration of a session, ensuring a constant and reserved channel for data transmission.
+    \item When a network establishes a circuit, it also reserves a constant transmission rate in the network's links (representing a fraction of each link's transmission capacity).
+    \item Since a fixed transmission rate has been reserved, the sender can transfer data to the receiver at the guaranteed constant rate.
+\end{itemize}
+
+\subsubsection{Frequency Division Multiplexing (FDM)}
+
+\begin{itemize}
+    \item With FDM, the frequency spectrum of a link is divided up among the connections established across the link.
+    \item The frequency band for telephone networks is 4kHz.
+    \item The width of the band is called the bandwidth
+    \item FM radio stations also use FDM to share the frequency spectrum between 88MHz and 108MHz.
+\end{itemize}
+
+\subsubsection{Time Division Multiplexing (TDM)}
+
+\begin{itemize}
+    \item With FDM the frequency domain is split up however with TDM, the time domain is split up.
+    \item Time is split into frames, each lasting for $T$ bits.
+    \item If a link has $N$ connections then each connection gets $N/T$ bits of transmission every $T$ bits (rotates peridodically across connections).
+\end{itemize}
+
+\subsection{Packet Switching vs. Circuit Switching}
+
+\begin{itemize}
+    \item An argument against packet switching is that it is not suitable for real-time services (telephone calls, video conferencing) because of unpredictable end-to-end delays (due primarily to queueing delays).
+    \item An argument against circuit switching is that it offers better sharing of transmission capacity.
+    \item Packet switching is less costly to implement than circuit switching.
+    \item During silent periods where no data is transmitted, bandwidth is wasted with circuit switching.
+    \item Packet switching allocates link use on demand whereas circuit-switching pre-allocates bandwidth.
+\end{itemize}
+
+\subsection{Network Performance}
+
+\subsubsection{Delay}
+
+\begin{itemize}
+    \item When a packet has fully arrived at a packet switch, it may experience several delays before arriving at the next packet switch.
+    \item Other than the ones mentioned below, end systems can also produce delays for example in packetization and depacketization of messages.
+\end{itemize}
+
+\subsubsection{Processing Delay}
+
+\begin{itemize}
+    \item The time required to examine the packet's header and determine where send it forms part of the processing delay.
+    \item The processing delay may also include the time it takes for encapsulation and decapsulation of packet layer information.
+    \item Devices processing the packet may also verify packet checksums to detect bit errors.
+\end{itemize}
+
+\subsubsection{Queueing Delay}
+
+\begin{itemize}
+    \item A packet experiences a queueing delay if it is ready to be transmitted onto a link but it has to wait (either there is a packet already in transmission or the queue is non-empty).
+    \item Queueing delays can be measured using the traffic intensity.
+    \item The traffic intensity is the ratio of the average rate at which bits arrive at a link to transmission rate that they are pushed out of the link.
+    \item A traffic intensity $> 1$ means that the packet queue will grow, whereas $\leq 1$ means the queue is stable or will shrink.
+\end{itemize}
+
+\subsubsection{Transmission Delay}
+
+\begin{itemize}
+    \item The transmission delay is the amount of time required to push all bits of a packet into a link.
+\end{itemize} 
+
+\subsubsection{Propagation Delay}
+
+\begin{itemize}
+    \item The propagation delay is the amount of time required for a bit to travel across a link.
+    \item The speed at which the bit travels depends on the physical medium and thus so does the delay.
+\end{itemize}
+
+\subsubsection{Throughput}
+
+\begin{itemize}
+    \item Instantaneous throughput at any instant of time is the rate ($bits/sec$) at which a receiver is receiving bits from a sender that form part of a piece of data.
+    \item Average throughput measures the average rate at which a receiver is receiving bits from a sender that form part of a piece of data (the quotient of the total bits and total data transfer time).
+\end{itemize}
+
+\subsubsection{Factors Affecting Throughput}
+
+\begin{itemize}
+    \item From end-to-end, there are several links connecting packet switches.
+    \item One of these links may be a global bottleneck link i.e the link with the lowest transmission rate.
+    \item The throughput thus depends on the transmission rate of the bottleneck link as data cannot flow faster end-to-end than the bottleneck allows.
+    \item Throughput also depends on queueing delays. Example:
+    \begin{itemize}
+        \item 10 unrelated pieces of data / messages are being transmitted across a link.
+        \item This means packets will get queued and the link has to share its capacity.
+        \item Assuming fair sharing of packets, the effective transmission rate of the link is now divided by 10 and so is the throughput across each message.
+    \end{itemize}
+\end{itemize}
+
+\section{The Application Layer}
+
+\subsection{HTTP}
+
+\subsubsection{Comparison to TCP HOL Blocking}
+
+\begin{itemize}
+    \item A TCP connection is a reliable, in-order, bidirectional stream of bytes.
+    \item When an application passes a byte stream to a TCP socket, it groups them in-order into segments.
+    \item The receiving side buffers incoming segments and reorders them if they arrive out of order.
+    \item The TCP socket on the recieving side will not deliver bytes to the application until all earlier bytes are present.
+    \item TCP will only deliver a contiguous prefix of the byte stream to the application. Example:
+    \begin{itemize}
+        \item A receiving side receives segments 2, 3, and 4.
+        \item It notices segment 1 is missing.
+        \item Then, it will request retransmission of segment 1 and won't deliver 2, 3, and 4 to the application.
+        \item Even though most data has arrived, TCP will wait and buffer it until all previous data has arrived.
+        \item This is transport-layer HOL blocking.
+    \end{itemize}
+\end{itemize}
+
+\subsection{HTTP/1.1}
+
+\paragraph{Without Pipelining}
+
+\begin{itemize}
+    \item Only one HTTP request can be handed off to a TCP socket / be in-flight at a time
+    \item The application must wait for the response before sending off the next request
+    \item Requests behave like a FIFO queue (no application-level HOL blocking)
+\end{itemize}
+
+\paragraph{With Pipelining}
+
+\begin{itemize}
+    \item Multiple HTTP requests can be handed off to a TCP socket / be in-flight at a time
+    \item Multiple responses can't be in-flight, only one at a time
+    \item On the server-side, responses are queued according to which requests arrive first (may not be the same order in which they were sent)
+    \item HOL block occurs because even if other responses are ready to go, they must wait for the current in-flight response to be delivered
+\end{itemize}
+
+\paragraph{Workarounds}
+
+\begin{itemize}
+    \item Browsers open multiple TCP connections per origin (6-8)
+    \item Requests are then spread across them
+    \item This helps but wastes resources, increases congestion, adds TCP overhead, and only reduces latency rather than eliminating HOL blocking
+\end{itemize}
+
+\subsubsection{HTTP/2}
+
+\begin{itemize}
+    \item HTTP/2 assigns request/response pairs a stream and an ID
+    \item It also breaks down its messages into frames at the application layer
+    \item Each frame is given the stream ID for the respective request/response
+    \item HTTP/2 takes frames from multiple streams and passes them to a TCP socket, interleaving them based on priority and flow control
+    \item If packet loss occurs, HOL blocking still occurs at the transport layer
+    \item Any buffered TCP segments have to wait for the earlier lost segment to be retransmitted
+    \item Any buffered, contiguous TCP segments that build up into frames ready for processing by HTTP/2 at the application layer also have to wait (this is blocking still at the transport-level, not application level)
+\end{itemize}
+
+\subsubsection{HTTP/3}
+
+\begin{itemize}
+    \item HTTP3 eliminates transport-layer blocking entirely
+\end{itemize}
+
+\subsection{SMTP}
+
+\begin{itemize}
+    \item A user agent allows a user to read, reply to, forward, save and compose e-mails
+    \item When a user sends a message from their user agent, the user agent sends it over to the user's mail server
+    \item The outgoing e-mail is placed in an outgoing message queue
+    \item The mail server sees it in the message queue and sends it over to the recipient's mail server via SMTP (which uses TCP)
+    \item The recipient's mail server receives the e-mail and places it in the recipient's mailbox
+    \item The recipient can then read the e-mail at their convenience
+    \item If more than one e-mail in the message queue goes to the same server, the client sends them over the same TCP connection
+\end{itemize}
+
+\subsection{DNS}
+
+\begin{itemize}
+    \item The domain name system (DNS) is a distributed database implemented in a hierarchy of DNS servers
+    \item It is also an application-layer protocol that allows hosts to query the distributed database for hostnames that translate to IP addresses
+    \item End systems usually have DNS applications that perform the client-side of DNS (querying)
+\end{itemize}
+
+\subsubsection{Services Provided by DNS}
+
+\begin{itemize}
+    \item Host aliasing:
+    \begin{itemize}
+        \item A hostname can also have one or more alias names that map to it (aliases)
+        \item The underlying hostname that maps to the IP is known as the canonical hostname
+    \end{itemize}
+    \item Load distribution:
+    \begin{itemize}
+        \item Web servers can have multiple replicas with each server running on a different end system
+        \item For replica web servers, a set of IP addresses is associated with a hostname
+        \item DNS queries for the hostname are replied with the entire set of IP addresses but the ordering is rotated
+        \item Clients typically use the IP address at the top of the list so rotation provides load distribution
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{DNS Servers}
+
+\begin{itemize}
+    \item DNS queries can be recusrive or iterative
+    \item When a requesting host sends a query Q to a recursive resolver to make it on their behalf, query Q is recursive
+    \item When a requesting host makes a direct DNS query (say to a root server or TLD server) that forms part of a larger query Q, each subquery is iterative as they form part of a larger query and each gets returned to the requesting host
+    \item In practice, the path a DNS query takes follows the points given below
+\end{itemize}
+
+\paragraph{Root DNS Servers}
+
+\begin{itemize}
+    \item There are 1000+ root server instances across the world that are copies of 13 different root servers
+    \item The 13 servers are managed by 12 different organisations and coordinated by the Internet Assigned Numbers Authority (IANA)
+    \item Root servers provide the IP addresses of TLD servers
+    \item When a requesting host makes a query for a hostname, it will first contact a root server (an iterative query)
+\end{itemize}
+
+\paragraph{TLD Servers}
+
+\begin{itemize}
+    \item For each top-level domain, there is a TLD server (or server cluster)
+    \item TLD servers provide the IP addresses for authoritative DNS servers
+    \item When a client gets the IP address of a TLD server from a root server, it can then contact the TLD server for an authoritative name server (an iterative query)
+    \item TLD servers may not always know the authoritative name server and only an intermediate name server which knows the authoritative server (zone delegation)
+\end{itemize}
+
+\paragraph{Authoritative DNS Servers}
+
+\begin{itemize}
+    \item Authoritative DNS servers house DNS records that map names of publically accessible hosts to IP addresses
+    \item The owner of the hosts often pays service providers to have these records stored in their authoritative name servers (think Namecheap, Cloudflare, etc.)
+    \item When a requesting host gets the IP address of an authoritative name server from a TLD server, it can then contact the authorative name server for the IP address of the hostname (iterative query)
+\end{itemize}
+
+\paragraph{Local DNS Servers}
+
+\begin{itemize}
+    \item ISPs have local DNS servers
+    \item When a host connects to an ISP, the ISP provides the host with the IP addresses of one or more of its local DNS servers that is close to the host
+    \item When hosts make DNS queries, they are typically sent to the local DNS server which acts as a proxy forwarding the query into the aformentioned hierarchy of root > TLD > authoritative
+    \item There also exist public DNS servers such as Google's (8.8.8.8) or Cloudflare's (1.1.1.1) which perform the same function
+    \item These types of servers are known as recursive resolvers, performing DNS queries on behalf of a requesting host
+\end{itemize}
+
+\subsubsection{DNS Caching}
+\begin{itemize}
+    \item When a resolver receives a reply to an iterative DNS query it caches the result locally
+    \item Resolvers discard cached DNS records after a certain time known as the Time-To-Live (TTL) set in the record itself
+    \item Common TTLs are 5mins, 1hr and 24hrs which mix flexibility and speed at varying levels
+    \item DNS record propagation means waiting for various caches around the world to expire with old records so the authoritative name server is queried again
+    \item End systems also maintain caches at the OS level (system-wide cache) as well as in web browsers or other applications that accesses the internet
+    \item When changing nameservers of a DNS record, records are being changed at the TLD level
+    \item These TLD servers often have a high non-configurable TTL (usually 48 hours) so any incoming queries will use cached records from the TLD instead of hitting the new nameserver
+\end{itemize}
+
+\subsubsection{DNS Records}
+
+\begin{itemize}
+    \item DNS servers store resource records (RRs)
+    \item A resource record contains 4 fields: name, value, type and TTL
+    \item MX records allows a company to point a hostname to another hostname of a mail server that handles mail for the original hostname
+    \item If a DNS server is authoritative it will contain A records for the hostname
+    \item If a server is not authoritative it will contain NS records for the domain that includes the hostname (a delegation)
+    \item It may also contain an A record that provides the IP address of that nameserver (glue)
+    \item Registrars enter DNS records into the DNS database
+    \item When registering a domain with a registrar, you have to provide the authoritative name servers (your provider may also provide them for you)
+    \item The registrar will then propagate an NS record and an A record into all of the servers for the respective TLD
+\end{itemize}
+
+\begin{longtable}{|l|l|l|}
+\hline
+\textbf{Type} & \textbf{Name} & \textbf{Value} \\ \hline
+A & A hostname for an IP address & The IP address \\ \hline
+NS & A domain (e.g foo.com) & The hostname of an authoritative name server that can resolve the domain \\ \hline
+CNAME & An alias hostname & The canonical hostname for the alias hostname \\ \hline
+MX & An alias hostname & The canonical hostname for the alias hostname of a mail server \\ \hline
+\end{longtable}
+
+\subsubsection{DNS Message Structure}
+
+\begin{itemize}
+    \item DNS messages have the same structure for queries and replies
+    \item DNS messages use big endian byte ordering
+    \item DNS messages usually fit inside one UDP packet
+    \item DNS uses UDP becauses it quicker and lighter
+    \item If there's no response to a DNS query the client just retries
+    \item If the response is too big or truncated, the server sets the TC flag and the client retries using TCP
+\end{itemize}
+
+\paragraph{Header}
+\begin{itemize}
+    \item The header of a DNS message is always 12 bytes
+\end{itemize}
+
+\paragraph{1. ID (2 bytes)}
+\begin{itemize}
+    \item The first 2 bytes of the header is a 16-bit number that identifies the query and reply (same ID in each pair)
+\end{itemize}
+
+\paragraph{2. Flags (2 bytes)}
+
+\begin{longtable}{|l|l|l|}
+\hline
+\textbf{Flag Name} & \textbf{Length} & \textbf{Description} \\ \hline
+QR & 1 bit & Query/Response: 0 = query, 1 = response \\ \hline
+Opcode & 4 bits & Operation code: 0 = Standard query, other codes \\ \hline
+AA & 1 bit & Authoritative Answer: (response only) Server is the authoritative server of a hostname \\ \hline
+TC & 1 bit & Truncated: 1 = Message was too large for UDP and was cut off \\ \hline
+RD & 1 bit & Recursion Desired: The server should perform recursive resolution \\ \hline
+RA & 1 bit & Recursion Available: (response only) Server supports recursion \\ \hline
+Z & 3 bits & Reserved: Must be 0, reserved for DNSSEC and future features \\ \hline
+RCODE & 4 bits & Response Code: 0 = No error, 3 = Name error (NXDOMAIN), other codes \\ \hline
+\end{longtable}
+
+\paragraph{3. QDCOUNT (2 bytes)}
+\begin{itemize}
+    \item The number of entries in the question section of a query
+    \item Is a 16-bit unsigned integer
+    \item Responses usually copy this value over from the query
+\end{itemize}
+
+\paragraph{4. ANCOUNT (2 bytes)}
+\begin{itemize}
+    \item The number of resource records in the answers section
+    \item Is a 16-bit unsigned integer (0 in a query)
+\end{itemize}
+
+\paragraph{5. NSCOUNT (2 bytes)}
+\begin{itemize}
+    \item The number of resource records in the authority section
+    \item Is a 16-bit unsigned integer (0 in a query)
+\end{itemize}
+
+\paragraph{6. Additional Record Count (2 bytes)}
+\begin{itemize}
+    \item The number of resource records in the additional section
+    \item Is a 16-bit unsigned integer (0 in a query)
+\end{itemize}
+
+\paragraph{Question Section}
+\begin{itemize}
+    \item There are QDCOUNT questions
+    \item Each question is formed by a QNAME, a QTYPE and a QCLASS
+    \item The QNAME of a question is a sequence of labels, each label is a sequence of 1-byte ASCII characters prefixed by a length byte indicating the length of the label (characters only)
+    \item The QNAME is terminated by a zero-length label (0x00)
+    \item The QTYPE is a 16-bit unsigned integer and represents what record is being asked for (A=1, AAAA=28, MX=15, etc.)
+    \item The QCLASS is a 16-bit unsigned integer, usually 1=IN (Internet)
+\end{itemize}
+
+\paragraph{Resource Record Sections}
+\begin{itemize}
+    \item All other sections use the same format
+    \item They are composed of the resource records that the server responds with (each record includes the name, type, value and TTL of the record)
+\end{itemize}
+
+\paragraph{Common Response Scenarios}
+
+\begin{longtable}{|l|p{5cm}|l|l|p{3cm}|}
+\hline
+\textbf{Scenario} & \textbf{Description} & \textbf{Answer Section} & \textbf{Authority Section} & \textbf{Additional Section} \\ \hline
+Successful lookup & Server is authoritative for the name and record type & Requestd RRs & & Optional helper RRs \\ \hline
+CNAME & Queried name is an alias and points to another name that must be resolved & CNAME record (and possible final RR) & & Optional helper RRs \\ \hline
+Delegation (referral) & Server is not authoritative and tells resolver where to ask next & & NS records for child zone & Potential glue records for NS \\ \hline
+NXDOMAIN & Queried name doesn't exist in the authoritative zone & & SOA of authoritative zone & \\ \hline
+NODATA & The name exists but the requestd record type doesn't & & SOA of authoritative zone & \\ \hline
+\end{longtable}
+
+\subsubsection{DNS Zones}
+\begin{itemize}
+    \item A DNS zone is a portion of the DNS namespace that a DNS server is authoritative for
+    \item It contains authoritative A records for the domains it manages
+    \item It can also contain delegation records (NS records) for child zones
+    \item A zone file is a file stored at the authoritative server that stores all DNS records for the zone (acting as the database)
+    \item The apex is the topmost domain name in a DNS zone
+\end{itemize}
+
+\paragraph{Zone Delegation}
+\begin{itemize}
+    \item A DNS server A can delegate a portion of its namespace to another DNS server B, creating a zone
+    \item This is done by creating an NS record in A to point to another authoritative server B for one of A's domains (e.g sub.example.com)
+    \item Now server B is the authority for the domain and its subdomains
+    \item In order to remove circular dependency for this record, a glue record (A type) may be added
+    \item Glue records are not authoritative and the authoritative source is the child zone authoritative server
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{dns_zoning.png}
+    \caption{Example of DNS Zoning}
+\end{figure}
+
+\paragraph{SOA (Start of Authority) Record}
+\begin{itemize}
+    \item Every DNS zone has exactly one SOA record located at the authoritative server for that zone
+    \item This record tells who is authoritative for the zone, how secondary servers keep the zone in sync and how long to cache negative answers
+\end{itemize}
+
+\section{The Transport Layer}
+
+\begin{itemize}
+    \item Transport-layer protocols provide logical communication between \\ \emph{processes} running on different hosts.
+    \item In comparison, network-layer protocols provide logical communication between \emph{hosts}.
+\end{itemize}
+
+\subsection{UDP}
+
+\subsubsection{Services Provided by UDP}
+
+\begin{itemize}
+    \item Process-to-process data delivery.
+    \item Segment integrity checking by including error-detection fields in the segment's header.
+    \item Multiplexing/demultiplexing is as simple as specifying the host and destination ports in the headers of a UDP segment.
+    \item When a sender specifies the source port it acts as a "return address".
+    \item UDP does not provide flow control and if receive buffer at the receiver overflows (segments arrive faster than the application reads) then packet loss occurs at layer 4.
+\end{itemize}
+
+\subsubsection{Segment Structure}
+
+\paragraph{Source Port}
+
+\begin{itemize}
+    \item Size: 16 bits 
+    \item The source port numbered 0 to 65535.
+\end{itemize}
+
+\paragraph{Destination Port}
+
+\begin{itemize}
+    \item Size: 16 bits
+    \item The destination port numbered 0 to 65535.
+\end{itemize}
+
+\paragraph{Length}
+
+\begin{itemize}
+    \item Size: 16 bits
+    \item Tthe total length of the segment (header + data) in bytes.
+    \item Minimum value is 8 bytes (just the header).
+    \item Theoretical maximum is 65535 bytes but usually limited by the MTU of the network.
+\end{itemize}
+
+\paragraph{Checksum}
+
+\begin{itemize}
+    \item Size: 16 bits
+    \item The checksum which is used for error-checking the header and data to ensure integrity.
+    \item The sender calculates a checksum over the segment's bits.
+    \item The receiver does the same maths, if the numbers don't match, the segment was corrupted in transit and typically discarded.
+\end{itemize}
+
+\paragraph{Payload}
+
+\begin{itemize}
+    \item Size: Theoretical maximum of 65527 (65535 - 8 header bytes).
+    \item The packet payload.
+\end{itemize}
+
+\subsection{TCP}
+
+\subsubsection{Overview}
+
+\paragraph{Multiplexing and Demultiplexing}
+
+\begin{itemize}
+    \item Refers to extending the host-to-host delivery service to a \\ process-to-process delivery service for applications running on the hosts.
+    \item The transport-layer in the receiving host doesn't deliver data directly to the process but to an intermediary socket (the OS's networking API).
+    \item Each transport-layer segment has a set of fields in the segment for this purpose.
+    \item Multiplexing and demultiplexing also happen at other layers of the OSI model whenever a protocol in the layer is used by other protocols higher up.
+\end{itemize}
+
+\subparagraph{Demultiplexing}
+
+\begin{itemize}
+    \item In a receiving host, the transport layer examines the fields a transport-layer segment in order to identify the receiving socket and then directs the segment to that socket.
+    \item Ths job of delivering the data in a transport-layer segment to the correct socket is called demultiplexing.
+\end{itemize}
+
+\subparagraph{Multiplexing}
+
+\begin{itemize}
+    \item The job of gathering data chunks passed to the transport-layer at the source host, encapsulating each chunk with header information to create segments, and passing the segments to the network layer is called multiplexing.
+\end{itemize}
+
+\paragraph{Sockets and Port Numbers}
+
+\begin{itemize}
+    \item Sockets on end hosts must be uniquely identified in order for multiplexing and demultiplexing to work at the transport-level.
+    \item The unique identifiers used are the source port number field and the destination port number field in a transport-layer segment.
+    \item Each port is an unsigned 16-bit number (0 to 65535).
+    \item Port numbers ranging from 0 to 1023 are well-known port numbers and are restricted.
+\end{itemize}
+
+\subsubsection{Segment Stucture}
+
+\begin{itemize}
+    \item MTU (Maximum Transmission Unit) is the largest physical packet size that a network interface (e.g ethernet cable) can handle.
+    \item The standard size for ethernet networks is 1500 bytes which is the size of an Ethernet frame's payload (an IP packet).
+    \item MSS (Maximum Segment Size) is the largest amount of application data that TCP can handle in a single segment.
+    \item MSS is usually 1460 bytes since the IP header is 20 bytes and the TCP header is 20 bytes.
+\end{itemize}
+
+\paragraph{Source Port (16 bits)}
+
+\begin{itemize}
+    \item  Size: 16 bits
+    \item The source port (0 to 65535).
+\end{itemize}
+
+\paragraph{2. Destination Port (16 bits)}
+
+\begin{itemize}
+    \item Size: 16 bits
+    \item The destination port (0 to 65535).
+\end{itemize}
+
+\paragraph{Sequence Number}
+
+\begin{itemize}
+    \item Size: 32 bits
+    \item The sequence number for a segment is calculated from the byte stream given to TCP.
+    \item E.g, if the byte stream consists of 500,000 bytes and the MSS is 1,000 bytes, TCP will construct 500 segments.
+    \item The bytes will be numbered from 0 to 499,999 and the sequence number will be the byte's number for where the segment starts (0, 1000, 2000, etc.).
+    \item Sequence numbers increase by the payload size sent in that packet (so if current seq. is 0 and you send a packet of 1000 bytes, current seq. becomes 1000).
+    \item Both sides choose a random initial sequence number which is done to minimize the possibility that a segment still present in the network from an earlier already-terminated connection is mistaken for a valid segment in a later connection.
+    \item Sequence numbers range from 0 to about 4 billion (4GB); when the max is reached the sequence number wraps around back to 0.
+\end{itemize}
+
+\paragraph{Acknowledgement Number}
+
+\begin{itemize}
+    \item Size: 32 bits
+    \item The number of the next byte the receiver expects to receive.
+    \item If a receiver sends an ACK with the number 1001, it is saying "I have successfully received everything up to and including byte 1000, please send 1001 next".
+    \item E.g, if a sender sends a segment with sequence number 500 and data length 200 (payload), the receiver will send an ack. number of 700 (we got bytes 500-699 now give us 700+).
+    \item The ack. number is cumulative so it can only advance if all previous bytes have been received.
+    \item E.g, seg A = bytes 1-100, seg B = bytes 101-200, seg C = bytes 201-300.
+    \begin{itemize}
+        \item Seg A arrives at receiver, receiver ACKs seg A by using ack. number 101 (asking for seg B).
+        \item Seg C arrives at receiver, receiver sees out of order packet, buffers it but ACKs 101 (asking again for 101 because it cannot ACK seg C yet).
+        \item The sender receives a duplicate ACK and realizes 101 is missing at the receiver and retransmits it.
+    \end{itemize}
+    \item Acknowledgement numbers increase by the number of bytes received in an in-order payload from the other side.
+    \item ACKs often piggyback on data being sent if the client and server are both exchanging data simulataneously.
+\end{itemize}
+
+\paragraph{Header Length}
+
+\begin{itemize}
+    \item Size: 4 bits
+    \item Tells the receiver the length of the header in 32-bit words.
+    \item A TCP header can have variable length due to the options field however it is usually empty making the header 20 bytes and the length field 0101 (5 32-bit words e.g 5 x 4 bytes = 20).
+\end{itemize}
+
+\paragraph{Flags}
+
+\begin{itemize}
+    \item Size: 9 bits
+    \item Flags that act as control bits to manage the state of the connection.
+    \item SYN: synchronize (start a connection).
+    \item ACK: indicates the acknowledgment field is valid (the segment contains an acknowledgement for a segment that has been successfully received).
+    \item FIN: finished (close a connection).
+    \item RST: reset the connection.
+\end{itemize}
+
+\paragraph{Receive Window}
+
+\begin{itemize}
+    \item Used for flow control, tells the sender "I only have room for X more bytes".
+\end{itemize}
+
+\paragraph{Checksum}
+
+\begin{itemize}
+    \item Used for error detection.
+\end{itemize}
+
+
+\subsubsection{Head-of-Line (HOL) Blocking }
+
+\begin{itemize}
+    \item A TCP connection is a reliable, in-order, bidirectional stream of bytes.
+    \item When an application passes a byte stream to a TCP socket, it groups them in-order into segments.
+    \item The receiving side buffers incoming segments and reorders them if they arrive out of order.
+    \item The TCP socket on the recieving side will not deliver bytes to the application until all earlier bytes are present.
+    \item TCP will only deliver a contiguous prefix of the byte stream to the application. Example:
+    \begin{itemize}
+        \item A receiving side receives segments 2, 3, and 4.
+        \item It notices segment 1 is missing.
+        \item Then, it will request retransmission of segment 1 and won't deliver 2, 3, and 4 to the application.
+        \item Even though most data has arrived, TCP will wait and buffer it until all previous data has arrived.
+        \item This is transport-layer head-of-line blocking.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Services Provided by TCP}
+
+\begin{enumerate}
+    \item Reliable data transfer ensuring data is correct and in order.
+    \item Flow control (regulating the rate at which data is transferred to help the receiver not be overloaded).
+    \item Congestion control (a service provided not so much to the application but to the internet as a whole).
+    \item Process-to-process data delivery.
+\end{enumerate}
+
+\subsubsection{Reliable Data Transfer}
+
+\begin{itemize}
+    \item Pipelining is used to avoid poor performance of stop-and-wait protocols and improve the utilization of the sender.
+    \item The sender can start sending any data it has whilst some of it is already in transit instead of waiting.
+    \item Pipelining allows the sender to send multiple packets without waiting for acknowledgements.
+    \item The introduction of pipelining has the following consequences (in comparison with the protocol developed in [rdt](./rdt)):
+    \begin{itemize}
+        \item The range of sequence numbers must be increased since each in-transit packet must have a unique sequence number.
+        \item The sender and receiver sides may have to buffer more than one packet (at minimum the sender has to buffer packets that have not yet been ack'd).
+        \item The range of seq. numbers and buffering requirements will depend on how the protocol responds to lost, corrupted or overly delayed packets.
+        \begin{itemize}
+            \item 2 basic approaches to pipelined error recovery can be identified: Go-Back-N and Selective Repeat.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\paragraph{TCP Implementation}
+
+\begin{itemize}
+    \item TCP uses a single retransmission timer.
+    \item When data is passed to TCP, a timer is started if there isn't already one running.
+    \item The timeout is associated with the oldest unacknowledged packet.
+    \item When the timeout occurs, TCP retransmits the oldest unacknowledged segment with the smallest sequence number.
+    \item When TCP retransmits it doubles the timeout interval (from what the previous value was).
+    \item The timer expiration is usually caused by congestion in the network and in times of congestion if the sender continues to retransmit packets persistently the congestion may get worse.
+    \item TCP uses cumulative acknowlegdements so when a new ack. number is received, the value of the sequence number of the oldest unacknowledged byte is updated and the timer restarted (assuming its bigger than what was known).
+    \item Timeout-triggered retransmissions increase end-to-end delay due to the sender withholding the segment.
+    \item TCP functions like Go-Back-N but instead of resending all unacknowledged packets on timeout it only retransmits the oldest unacknoweldged packet.
+    \item TCP also relies on duplicate ACKs, if three duplicate ACKs are received then the oldest unacknowledged packet is retransmitted immediately instead of waiting for the timeout (fast retransmit).
+\end{itemize}
+
+\paragraph{Round-Trip Time Estimation and Timeout}
+
+\begin{itemize}
+    \item A new value for the sample RTT can be obtained once every RTT (since we get a new approximation / data point).
+    \item The sample RTT fluctuate between segments due to congestion in routers.
+    \item TCP calculates its timeout using an estimate of the round trip time plus some margin.
+    \item The estimate is calculated using an average such that newer samples of the RTT provide more weight in the average.
+    \item The margin is calculated based on how much the RTT samples vary; when there is a lot of fluctuation, the margin is large, when there isn't any, the margin is small.
+    \item The initial timeout interval is 1 second.
+\end{itemize}
+
+\subsubsection{Flow Control}
+
+\begin{itemize}
+    \item TCP senders and receivers each have a send buffer and a receive buffer.
+    \item The send buffer contains data that was sent but not yet acknowledged and kept for the case of retransmission as well as data that TCP is waiting to transmit (waiting for the window to slide up).
+    \item The receive buffer contains in-order data that was received and that is ready for the application above to read.
+    \item TCP has a flow control service that it provides to its application to prevent the possibility of the sender overflowing the receiver's receive buffer.
+    \item Flow control acts like a speed-matching service that matches the rate at which the sender is sending against the rate at which the receiving application is reading.
+    \item The sender maintains a "receive window" state variable which gives the sender an idea of much free buffer space is available at the receiver.
+    \item The LastByteRead variable is the number of the last byte read from the buffer by the application process.
+    \item The LastByteRcvd variable is the number of the last byte received and placed in the buffer.
+    \item rwnd = RcvBuffer - (LastByteRcvd - LastByteRead); the receive window is the amount of remaining space available in the buffer.
+    \item The rwnd value is placed in the receive window field of the header of every segment that is sent back from the receiver.
+    \item The sender on the other side maintains the LastByteSent and \\ LastByteAcked variables (the difference between them is the amount of unacknowledged data sent into the connection).
+    \item By keeping the amount of unacknowledged data less than rwnd, the sender prevents the receive buffer from overflowing on the other side.
+    \item However, if rwnd is 0 and the sender has no more data to send then no data segments or ACKs will be transmitted which stops any future data received from above from being transmitted when space eventually opens up in the receive buffer and the sender has data to send.
+    \item TCP uses a mechanism call Zero Window Probe (ZWP) which starts a persist timer that runs indefinitely when rwnd is 0 to prevent this.
+    \item The sender will send the next byte of data in the sequence after the timer expires (intentionally breaking the rules) to force a response from the receiver with a potential new rwnd value.
+    \item If the window is still 0, the persist timer is restarted and doubles the wait time.
+\end{itemize}
+
+\subsubsection{Congestion Control}
+
+\paragraph{Costs of Congeston}
+
+\begin{itemize}
+    \item As packet arrival rate nears link capacity (congestion), large queueing delays are experienced.
+    \item As packet loss occurs (due to congestion), the sender has to perform retransmissions to compensate for lost packets.
+    \item If a network is congested and experiencing large queueing delays, the sender may timeout and retransmit the packet when it is unneeded (e.g previous packet received or still in transit), wasting link bandwidth that could've been better spent on other packets.
+    \item When a packet is dropped at a router, the transmission capacity used for forwarding the packet at each link between that router and the sender was wasted.
+\end{itemize}
+
+\paragraph{TCP Implementation}
+
+\subsection{TCP Connection Management}
+
+\subsubsection{Opening a Connection}
+
+\paragraph{Step 1 - Send SYN}
+
+\begin{itemize}
+    \item The client sends a data-less TCP segment with the SYN flag set to 1 in the header.
+    \item The client also adds the randomly chosen initial sequence number to the header.
+\end{itemize}
+
+\paragraph{Step 2 - Receive SYN, Send SYNACK}
+
+\begin{itemize}
+    \item The receiver receives the SYN segment and allocates the TCP buffers and variables to the connection.
+    \item A connection-granted (SYNACK) segment is then sent to the client.
+    \item The SYN bit here is set to 1.
+    \item The ACK number here is set to the client's initial sequence number + 1.
+    \item The server also adds its randomly chosen initial sequence number to the header.
+\end{itemize}
+
+\paragraph{Step 3 - Receive SYNACK}
+
+\begin{itemize}
+    \item When the client receives the SYNACK segment, it also allocates variables and buffers to the connection.
+    \item The client then sends another segment to the server with the ACK number set to the server's initial sequence number + 1 (acknowledging the connection-granted SYNACK segment).
+    \item Here the SYN bit is set to 0 since the connection is established.
+    \item This segment may contain application data in the payload.
+\end{itemize}
+
+\subsubsection{Closing a Connection}
+
+\begin{itemize}
+    \item Because TCP is full-duplex, each direction of the connection must be closed independently.
+\end{itemize}
+
+\subparagraph{Step 1 - Client FIN}
+
+\begin{itemize}
+    \item The client sends a segment with the FIN flag set to 1 (when the client has no more data to send).
+    \item The client then enters the FIN-WAIT-1 state (waiting for the ACK).
+\end{itemize}
+
+\subparagraph{Step 2 - Server FINACK}
+
+\begin{itemize}
+    \item The server then responds with an ACK acknowledging that the client wants to close the connection.
+    \item The server then enters the CLOSE-WAIT state and the client enters the FIN-WAIT-2 state.
+\end{itemize}
+
+\subparagraph{Step 3 - Server FIN}
+
+\begin{itemize}
+    \item The server sends a segment with the FIN flag set to 1 (when the server has no more data to send).
+    \item The server then enters the LAST-ACK state.
+\end{itemize}
+
+\subparagraph{Step 4 - Client FINACK}
+
+\begin{itemize}
+    \item The client then responds with an ACK acknowledging that the server wants to close the connection.
+    \item The client then enters a TIME-WAIT state (safety buffer).
+    \item The server receives this ACK and immediately closes the connection (enters the CLOSED state).
+    \item In the TIME-WAIT state the client enters a wait period (usually twice the maximum segment lifetime).
+    \item This is done for reliability i.e if the client's FINACK gets lost there is a window for the server to resend its FIN and the ACK to be resent.
+    \item This also allows wandering packets from the old connection to die off in the network, preventing a new connection using the same port numbers from accidentally receiving a delayed packet from the old connection.
+    \item If the last ACK has to be retransmitted the TIME-WAIT timer is \\ restarted.
+\end{itemize}
+
+\subsubsection{RST (Reset)}
+
+\begin{itemize}
+    \item If a server host receives a TCP SYN segment but the host is not listening for TCP connections on the target port, the host will then send a segment with the RST flag set to 1.
+    \item It tells the sender that it is not accepting TCP connections on that port.
+\end{itemize}
+
+\section{The Network Layer: Data Plane}
+
+\subsection{Overview}
+
+\subsubsection{Data and Control Planes}
+
+\begin{itemize}
+    \item The network layer can be subdivided into two planes:
+    \begin{itemize}
+        \item \textbf{Data plane}: Functions that determine how a datagram arriving on a router's input link is forwarded to an output link
+        \item \textbf{Control Plane}: Network-wide logic that controls how a datagram is routed amongst routers on an end-to-end path from source to destination
+    \end{itemize}
+\end{itemize} 
+
+\subsubsection{Forwarding and Routing}
+
+\begin{itemize}
+    \item The job of the network layer is to move packets from a sending host to a receiving host.
+    \item Two network functions are required for this:
+    \begin{itemize}
+        \item \textbf{Forwarding}: A router deciding which output \\ link an incoming packet should go to.
+        \item \textbf{Routing}: The network deciding the route or path taken by packets flowing from sender to receiver (algorithms that calculate these paths are called \emph{routing algorithms}).
+    \end{itemize}
+    \item A key aspect of a router is its \emph{forwarding table}.
+    \item The router looks at the headers in a packet and then uses these values to index its forwarding table.
+    \item The value stored for a forwarding table entry indicates the outgoing link that correspond to those header values for the packet.
+    \item The contents of a forwarding table are determined by a routing algorithm.
+    \item The routing algorithm function in one router and another communicate via a \emph{routing protocol} to compute the values for its forwarding table (traditional control plane approach).
+    \item Routing can also be \emph{software-defined} where an external remote controller performs control-plane functionality for a network instead of router-to-router.
+    \item These are known as \emph{software-defined networks} (SDNs).
+\end{itemize}
+
+\subsubsection{Network Service Model}
+
+\begin{itemize}
+    \item The network service model defines the characteristics of end-to-end delivery of packets between senders and receivers.
+    \item The internet's network layer provides a single service known as best-effort service where no guarantees are made (e.g on delivery, delay, in-order delivery, etc).
+\end{itemize}
+
+\subsection{What's Inside a Router}
+
+\subsubsection{Components}
+
+\begin{itemize}
+    \item Four components of a high-level, generic router can be identified.
+    \item A router's input ports, output ports, and switching fabric are almost always implemented in hardware.
+    \item So the data plane is also hardware-level, operating at the nanosecond time scale whereas control-plane funcionality operates at millisecond or second timescale in software.
+\end{itemize}
+
+\paragraph{Input Ports}
+
+\begin{itemize}
+    \item Performs the physical layer function of terminating an incoming physical link.
+    \item Performs link-layer functions needed to interoperate with the link layer at the other side of the link (e.g another router's output port).
+    \item A lookup function is also performed at the input port which consults the forwarding table to determine the necessary output port for a packet received.
+    \item Afterwards, the port will pass on the packet to the output port via the switching fabric.
+    \item A control packet (e.g packets carrying routing protocol information) are forwarded to the routing processor instead of an output port.
+\end{itemize}
+
+\paragraph{Switching Fabric}
+
+\begin{itemize}
+    \item The switching fabric connects the router's input ports to its output ports.
+\end{itemize}
+
+\paragraph{Output Ports}
+
+\begin{itemize}
+    \item Stores packets received from the switching fabric.
+    \item Transmits them onto the outgoing link by performing necessary link-layer and physical-layer functions.
+    \item When a link is bidirectional (carries traffic in both directions), components of an output port will be paired with components of an input port in one unit (the same line card).
+\end{itemize}
+
+\paragraph{Routing Processor}
+
+\begin{itemize}
+    \item Performs control-plane functions.
+    \item In traditional routers it executes routing algorithms, maintains routing tables and attached link state information, as well as computing the forwarding table.
+    \item In SDN routers, the routing processor is responsible for communicating with the remote controller in order to receive forwarding table entries computed externally.
+    \item The routing processor also performs network management functions.
+\end{itemize}
+
+\subsubsection{Input Port Processing \& Destination-Based Forwarding}
+
+\begin{itemize}
+    \item Input port processing and destination-based forwarding consist of the following functions at input ports.
+    \item Other aspects of  processing like blocking, \\ queueing, and scheduling of packets at both entry and exit of the input port are also managed at input ports.
+\end{itemize}
+
+\paragraph{Lookup}
+
+\begin{itemize}
+    \item The forwarding table in a router is either computed with a routing protocol or received from a remote SDN controller.
+    \item The forwarding table (at the routing processor) is copied to the input line cards over a separate bus.
+    \item This allows for local lookup and forwarding decisions instead of invoking the central processor which could cause a bottleneck.
+    \item Instead of a forwarding table holding, say, 4 billion IP addresses, it can have ranges of IP addresses corresponding to each of its outgoing links.
+    \item This involves using a prefix to match a range of IP addresses with the same prefix.
+    \item When there are multiple matching prefixes, the router uses the \emph{longest prefix matching rule}.
+\end{itemize} 
+
+
+
+\paragraph{Physical-Layer Processing}
+
+\begin{itemize}
+    \item The input port must demodulate the phsyical signals of a packet into a digital representation.
+\end{itemize}
+
+
+\paragraph{Link Layer Processing}
+
+\begin{itemize}
+    \item The router performs a CRC for the FCS in the link-layer frame.
+    \item The link-layer frame must also be decapsulated.
+\end{itemize}
+
+\paragraph{IP Processing}
+
+\begin{itemize}
+    \item The packet's version number, checksum and TTL must be updated.
+    \item The destination (IP) must be identified in order to perform lookup.
+\end{itemize}
+
+\subsubsection{Switching}
+
+\paragraph{Switching via memory}
+
+\begin{itemize}
+    \item Switching is controlled by the CPU of the router.
+    \item The packet is copied from the input port into the processor memory, a forwarding decision is made, and then the packet copied to the necessary output port's buffers.
+    \item If the memory bandwidth of the system bus is $B$ packets per second, then the total switching throughput is $\leq B/2$ since every packet must cross the system bus twice (once to enter process memory and once to leave).
+\end{itemize}
+
+\paragraph{Switching via a bus}
+
+\begin{itemize}
+    \item An input port transfers a packet directly to the output port via a shared bus (without intervention from the routing processor).
+    \item Typically done by having an input port attach a switch-internal label indicating the output port.
+    \item All output ports attached to the bus receive the packet but only the port that matches the label keeps it.
+    \item The label is then removed at the output port (no longer needed).
+    \item Only one packet can cross the bus at a time, meaning the switching speed of the router is limited by the bandwidth of the bus.
+\end{itemize}
+
+\paragraph{Switching via an interconnection network}
+
+\begin{itemize}
+    \item A crossbar switch is an interconnection network consisting of $2N$ buses that connect $N$ input ports to $N$ output ports.
+    \item Each vertical bus intersects a horizontal bus at a crosspoint.
+    \item Each crosspoint can be opened or closed by the switch fabric controller to connect a horizontal and vertical bus.
+    \item Thus, \textbf{only one} crosspoint needs to be closed for an input port attached to a horiztonal bus to be passed onto the vertical bus at that crosspoint (the electrical signal will always travel the full width of the bus but only be picked up by the closed crosspoint).
+    \item Crossbar switches are non-blocking meaning so long as two packets wanting to be transmitted each belong to a different input and output port, blocking will not occur as the buses are independent of each other.
+\end{itemize}
+
+
+\section{The Data Link Layer}
+
+\subsection{Frames}
+
+\begin{itemize}
+    \item A frame is the data unit at layer 2.
+    \item A frame packages bits transmitted at layer 1.
+\end{itemize}
+
+\subsubsection{Structure}
+
+\paragraph{Preamble}
+
+\begin{itemize}
+    \item Size: 7 bytes
+    \item Shape: \texttt{10101010}
+    \item Purpose: Allows receivers to synchronize their clock at the bit-level by detecting the signal of an incoming frame. The receiver will lock onto the signal timing to know where each bit will start and end.
+\end{itemize}
+
+\paragraph{Start Frame Delimiter (SFD)}
+
+\begin{itemize}
+    \item Size: 1 byte
+    \item Shape: \texttt{10101011}
+    \item Purpose: Signals to the receiver the start of a frame. The bit at the end breaks the pattern of the preamble signalling the start of the frame data.
+\end{itemize}
+
+\paragraph{Destination MAC Address}
+
+\begin{itemize}
+    \item Size: 6 bytes
+    \item Purpose: A link-layer switch reads this field to determine where to send the frame (the target device).
+    \item Special cases:
+    \begin{itemize}
+        \item Broadcast: \texttt{FF:FF:FF:FF:FF:FF} - Frame goes to all devices on the network
+        \item Specific range of MAC addresses - Frame goes to multiple subscribed devices
+    \end{itemize}
+\end{itemize}
+
+\paragraph{Source MAC Address}
+
+\begin{itemize}
+    \item Size: 6 bytes
+    \item Purpose: Identifies the MAC address of the sender of the frame and lets switches learn MAC addresses to build their forwarding tables.
+\end{itemize}
+
+\paragraph{EtherType / Length}
+
+\begin{itemize}
+    \item Size: 2 bytes
+    \item Shape: EtherType $\geq$ \texttt{0x0600} (decimal 1536), Length $\leq$ 1500
+    \item EtherType: Specifies which layer 3 protocol is encapsulated (e.g IPv4 = \texttt{0x0800}, IPv6 = \texttt{0x86DD}, ARP = \texttt{0x0806})
+    \item Length: Indicates how many bytes are in the payload.
+    \item Purpose: Lets the receiver know how to interpret the payload.
+\end{itemize}
+
+\paragraph{Payload / Data}
+
+\begin{itemize}
+    \item Size: 46-1500 bytes
+    \item Purpose: Carries actual data, usually a layer 3 packet
+    \item Minimum size is 46 bvtes, if size is smaller padding bytes (\texttt{0x00}) are added to the end of the payload to meet the minimum ethernet frame size of 64 bytes.
+    \item Maximum size is 1500 bytes which is the standard MTU (Maximum Transmission Unit) for ethernet.
+\end{itemize}
+
+\paragraph{Frame Check Sequence (FCS)}
+
+\begin{itemize}
+    \item Size: 4 bytes
+    \item Purpose: Error detection using CRC (Cyclic Redundancy Check).
+    \item The sender calculates a checksum over all previous bits in the frame and stores it in the FCS.
+    \item The receiver recalculates the checksum and compares it to the FCS. If they match the frame is likely ok, otherwise it is discarded.
+\end{itemize}
+
+\subsubsection{Data Loss}
+
+\begin{itemize}
+    \item Error checking occurs at the NIC (network interface card) where the FCS and MAC address are checked that they are ok.
+    \item If error detection fails, the frame is discarded/dropped which causes data loss at layer 2.
+    \item Data loss is handled differently depending on the upper layer (e.g TCP, lost frame = lost segment = TCP detects missing sequence numbers = TCP retransimits the segment).
+\end{itemize}
+
+\subsubsection{Sending Frames}
+
+\begin{itemize}
+    \item When an application wants to send data, the device creates an IP packet with the source IP and destination IP.
+    \item The IP layer asks "is the destination on my local network or somewhere else?".
+    \item Every device has a routing table. If a destination matches a local route, send the packet directly otherwise send to the default gateway (a router's IP address on the local network).
+    \item The routing table contains information about IP addresses, their gateways, subnet masks, and what outgoing network interface to use for them.
+    \item Once the device decides where the IP packet must go using the routing table it needs a destination MAC address to build an ethernet frame.
+\end{itemize}
+
+\subsubsection{Building Ethernet Frames}
+
+\begin{itemize}
+    \item Once the device knows the local IP to send to and which network interface (found in the routing table), it has to find the corresponding MAC address.
+    \item The device checks the network interface's ARP table for the MAC address.
+    \item If missing, an ARP request is sent/broadcast asking "who has IP x?" to obtain the MAC address.
+    \item An ethernet frame is constructed with a destination MAC address of \texttt{FF:FF:FF:FF:FF:FF} (broadcast) and exits the device using the network interface.
+    \item The corresponding device then responds to the request with the MAC address which is then cached in the ARP table.
+    \item An ethernet frame can now be constructed.
+\end{itemize}
+
+\subsection{Link Layer Switches}
+
+\begin{itemize}
+    \item A layer 2 switch operates on ethernet frames.
+    \item The switch maintains a MAC address table where each entry contains a MAC address, the port and a timestamp of when it was recorded.
+    \item MAC table entries expire after a period of inactivity (typically ~300 seconds) which prevents stale entries when devices move or disconnect.
+    \item A switch is only responsible for accepting incoming frames and forwarding them to their destination.
+    \item MAC Learning: When a frame arrives on a port the switch updates the table with the source MAC address, port number, and timestamp or inserts into the table.
+\end{itemize}
+
+\subsubsection{Forwarding}
+
+\begin{itemize}
+    \item Destination MAC is known: The switch looks up the MAC address in the table and forwards the frame only to the correct port.
+    \item Destination MAC is unknown: The switch floods the frame out of all ports except the incoming one (unknown unicast flooding). When the destination device replies, the switch learns its MAC and future frames are sent directly.
+    \item Desination MAC = \texttt{FF:FF:FF:FF:FF:FF}: The switch floods the frame out of all ports except the incoming one (used for things like ARP requests and DHCP discovery).
+\end{itemize}
+
+\section{The Physical Layer}
+
+\subsection{Access Networks}
+
+\subsubsection{Digital Subscriber Line}
+
+\begin{itemize}
+    \item DSL uses existing telephone infrastructure in order to provide internet access to homes.
+    \item A DSL modem inside a home takes digital data and translate it into high frequency tones for transmission over telephone wires to the local central office of a telco/ISP.
+    \item The telephone line carries both telephone signals and data simultaneously.
+    \item The signals are encoded at difference frequences:
+    \begin{itemize}
+        \item 0-4kHz band: two-way telephone channel .
+        \item 4-50kHz band: medium-speed upstream data channel.
+        \item 50kHz-1MHz: high-speed upstream data. channel
+    \end{itemize}
+    - On the customer side, a splitter splits data and telephone signals and forwards data signals to the modem.
+\end{itemize}
+
+\subsubsection{Cable Internet}
+
+\begin{itemize}
+    \item Cable internet access uses television infrastructure in order to provide internet access to homes.
+    \item Cable internet uses coaxial cables to provide internet and television signals to homes.
+    \item It is a shared broadcast medium meaning every downstream packet travels down every downstream link to every home.
+    \item This means that internet may slower for users when traffic is heavy and a lot of bandwidth is taken up.
+\end{itemize}
+
+\subsubsection{Other Forms of Access}
+
+\begin{itemize}
+    \item FTTH (Fiber To The Home)
+    \item Ethernet
+    \item 5G Fixed Wireless
+    \item WiFi
+\end{itemize}
+
+\subsection{Physical Media}
+
+\begin{itemize}
+    \item Whenever a bit propagates through a network, it will travel across several physical media.
+    \item A bit is sent by propagating electromagnetic waves or optical pulses \\ through a physical medium between a transmitter-receiver pair.
+    \item Physical media come in two types: guided media and unguided media.
+    \item With guided media, the waves are guided along a solid medium (e.g copper cable, optic fibre).
+    \item With unguided media, the waves propagate in the atmosphere or outer space (e.g wireless LAN, digital satellite channel).
+\end{itemize}
+
+\glsaddall
+\printglossaries
+
+\end{document}
