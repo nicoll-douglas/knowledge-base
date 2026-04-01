@@ -1,9 +1,115 @@
-\newglossaryentry{packetswitching}{
+\newglossaryentry{packet_switching}{
     name={Packet Switching},
-    description={A network transmission method that breaks data up into into small chunks called packets before transmission and is then reassembled at the destination}
+    text={packet switching},
+    description={A network transmission method that breaks data up into into small chunks called packets before transmission and is then reassembled at the destination.}
 }
 
-\newglossaryentry{storeandforward}{
-    name={Store-and-forward},
-    description={A transmission method where packet switches must receive an entire packet and process it whole before it can transmit the first bit of the packet onto the outbound link}
+\newglossaryentry{store_and_forward}{
+    name={Store-and-Forward},
+    text={store-and-forward},
+    description={A transmission method where packet switches must receive an entire packet and process it whole before it can transmit the first bit of the packet onto the outbound link.}
+}
+
+\newglossaryentry{packet_switch}
+{
+    name={Packet Switch},
+    text={packet switch},
+    plural={packet switches},
+    description={A network device that moves packets from input links onto output links using a store-and-forward mechanism.}
+}
+
+\newglossaryentry{circuit_switching}
+{
+    name={Circuit Switching},
+    text={circuit switching},
+    description={A network transmission method that establishes a dedicated physical or logical connection between communication devices for the duration of a session.}
+}
+
+\newabbreviation[
+    description={A multiplexing technique that partitions the total bandwidth of a link into separate frequency channels, each dedicated to a specific user or connection.}
+]{fdm}{FDM}{Frequency Division Multiplexing}
+
+\newabbreviation[
+    description={A multiplexing technique that partitions a communication link into distinct time slots. Each connection is allocated a specific, recurring, periodic slot in which to transmit data, ensuring users share the link by taking turns in the time domain.}
+]{tdm}{TDM}{Time Division Multiplexing}
+
+\newglossaryentry{processing_delay}{
+    name={Processing Delay},
+    text={processing delay},
+    description={The time required by a router to examine a packet's header, determine its outgoing link, and place it in the link's queue.}
+}
+
+\newglossaryentry{queueing_delay}{
+    name={Queuing Delay},
+    text={queueing delay},
+    description={The time a packet waits in an a router's output buffer before being transmitted onto the outgoing link.}
+}
+
+\newglossaryentry{transmission_delay}{
+    name={Transmission Delay},
+    text={transmission delay},
+    description={The time taken to push all bits of a packet onto a link, calculated as $L/R$ (packet length over transmission rate).}
+}
+
+\newglossaryentry{propagation_delay}{
+    name={Propagation Delay},
+    text={propagation delay},
+    description={The time required for a single bit to travel across a link.}
+}
+
+\newglossaryentry{instantaneous_throughput}{
+    name={Instantaneous Throughput},
+    text={instantaneous throughput},
+    description={The rate measured in bits per second at which a destination host is receiving data at any specific point in time.}
+}
+
+\newglossaryentry{average_throughput}{
+    name={Average Throughput},
+    text={average throughput},
+    description={The total amount of data transferred divided by the total time taken for a data transfer, representing the overall efficiency of the connection.}
+}
+
+\newglossaryentry{throughput}{
+    name={Throughput},
+    text={throughput},
+    description={The actual rate of successful data delivery over a communication link or network.}
+}
+
+\newglossaryentry{transmission_rate}{
+    name={Transmission Rate},
+    text={transmission rate},
+    description={The hardware-defined maximum speed, measured in bits per second at which a link can transmit data.}
+}
+
+\newglossaryentry{http_pipelining}{
+    name={HTTP/1.1 Pipelining},
+    text={HTTP/1.1 pipelining},
+    description={A technique in HTTP/1.1 that allows a client to send multiple HTTP requests over a single TCP connection without waiting for the corresponding responses, however, requiring that the server return responses in the exact order that its requests were received.}
+}
+
+\newabbreviation[
+    name={Head-of-Line Blocking}, 
+    description={A queueing phenomenon where the first item (the "head") in a sequence prevents subsequent items from being processed, even if those later items are ready and resources are available to handle them. This typically occurs in FIFO systems where strict ordering is enforced.}
+]{hol}{HOL}{head-of-line blocking}
+
+\newglossaryentry{dns_zone}{
+    name={DNS Zone},
+    text={DNS zone},
+    description={A portion/division of the DNS namespace managed by a specific authoritative name server, containing the resource records for a domain and its delegated subdomains.}
+}
+
+\newglossaryentry{recursive_query}
+{
+    name={Recursive DNS Query},
+    text={recursive DNS query},
+    plural={recursive DNS queries},
+    description={A DNS query where the client requires a recursive resolver to manage the entire resolution process, returning either the final resource record or an error message.}
+}
+
+\newglossaryentry{iterative_query}
+{
+    name={Iterative DNS Query},
+    text={iterative DNS query},
+    plural={iterative DNS queries},
+    description={A DNS query where the receiving server returns a referral to other name servers if it does not have the specific record, leaving the client to continue the search process.}
 }

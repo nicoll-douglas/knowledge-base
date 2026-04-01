@@ -3,6 +3,7 @@
 \title{Networking Theory Notes}
 \author{Nicoll Douglas}
 
+
 \usepackage{float}
 
 \usepackage{graphicx}
@@ -15,14 +16,13 @@
 \hypersetup{
     linkcolor=linkColor
 }
-\usepackage{hyperref}
-\usepackage[toc]{glossaries}
 
+\usepackage[toc, hyperfirst=true]{glossaries-extra}
+\setabbreviationstyle{long-short-desc}
 \makeglossaries
 \loadglsentries{glossary.tex}
 
 \begin{document}
-
 \maketitle
 \tableofcontents
 
@@ -31,24 +31,24 @@
 \subsection{Packet Switching}
 
 \begin{itemize}
-    \item \Gls{packetswitching} is a method of transmitting data through a network by breaking it up into small units called packets.
+    \item \Gls{packet_switching} is a method of transmitting data through a network by breaking it up into small units called packets.
     \item Each packet is sent independently through the network and may take different paths to reach the destination, where the packets are reassembled into the original message.
     \item Network application exchange messages with each other which are broken down into packets at the source.
-    \item Between source and destination, packets travel through communication links and packet switches (routers and link-layer switches mainly).
-    \item Packets are transmitted over each link at a rate equal to the full transmission rate of the link.
+    \item Between source and destination, packets travel through communication links and \glspl{packet_switch} (routers and link-layer switches mainly).
+    \item Packets are transmitted over each link at a rate equal to the full \gls{transmission_rate} of the link.
 \end{itemize}
 
 \subsubsection{Store-and-Forward Transmission}
 
 \begin{itemize}
-    \item \Gls{storeandforward} transmission means that packet switches must receive an entire packet before it can transmit the first bit of the packet onto the outbound link.
-    \item Packet switches do this because they need to process data in the packet in order to forward it to the correct place.
+    \item \Gls{store_and_forward} transmission means that \glspl*{packet_switch} must receive an entire packet before it can transmit the first bit of the packet onto the outbound link.
+    \item \Glspl*{packet_switch} do this because they need to process data in the packet in order to forward it to the correct place.
 \end{itemize}
 
 \subsubsection{Packet Queueing}
 
 \begin{itemize}
-    \item Each outbound link of a packet switch has an output buffer (queue) which stores packets the switch will send out of that link.
+    \item Each outbound link of a \gls*{packet_switch} has an output buffer (queue) which stores packets the switch will send out of that link.
     \item If a packet arrives at the queue but there are other packets in front, it will suffer a queueing delay.
     \item If an output buffer is full, packet loss will occur as any incoming packets will be dropped.
 \end{itemize}
@@ -56,36 +56,36 @@
 \subsection{Circuit Switching}
 
 \begin{itemize}
-    \item Circuit switching is a method of transmitting data through a network by creating a dedicated path or circuit from one endpoint to another for the entire duration of a session, ensuring a constant and reserved channel for data transmission.
-    \item When a network establishes a circuit, it also reserves a constant transmission rate in the network's links (representing a fraction of each link's transmission capacity).
-    \item Since a fixed transmission rate has been reserved, the sender can transfer data to the receiver at the guaranteed constant rate.
+    \item \Gls{circuit_switching} is a method of transmitting data through a network by creating a dedicated path or circuit from one endpoint to another for the entire duration of a session, ensuring a constant and reserved channel for data transmission.
+    \item When a network establishes a circuit, it also reserves a constant \gls*{transmission_rate} in the network's links (representing a fraction of each link's transmission capacity).
+    \item Since a fixed \gls*{transmission_rate} has been reserved, the sender can transfer data to the receiver at the guaranteed constant rate.
 \end{itemize}
 
 \subsubsection{Frequency Division Multiplexing (FDM)}
 
 \begin{itemize}
-    \item With FDM, the frequency spectrum of a link is divided up among the connections established across the link.
+    \item With \gls{fdm}, the frequency spectrum of a link is divided up among the connections established across the link.
     \item The frequency band for telephone networks is 4kHz.
     \item The width of the band is called the bandwidth
-    \item FM radio stations also use FDM to share the frequency spectrum between 88MHz and 108MHz.
+    \item FM radio stations also use \gls*{fdm} to share the frequency spectrum between 88MHz and 108MHz.
 \end{itemize}
 
 \subsubsection{Time Division Multiplexing (TDM)}
 
 \begin{itemize}
-    \item With FDM the frequency domain is split up however with TDM, the time domain is split up.
+    \item With \gls*{fdm} the frequency domain is split up however with \gls{tdm}, the time domain is split up.
     \item Time is split into frames, each lasting for $T$ bits.
-    \item If a link has $N$ connections then each connection gets $N/T$ bits of transmission every $T$ bits (rotates peridodically across connections).
+    \item If a link has $N$ connections then each connection gets $N/T$ bits of transmission every $T$ bits (rotates periodically across connections).
 \end{itemize}
 
 \subsection{Packet Switching vs. Circuit Switching}
 
 \begin{itemize}
-    \item An argument against packet switching is that it is not suitable for real-time services (telephone calls, video conferencing) because of unpredictable end-to-end delays (due primarily to queueing delays).
-    \item An argument against circuit switching is that it offers better sharing of transmission capacity.
-    \item Packet switching is less costly to implement than circuit switching.
-    \item During silent periods where no data is transmitted, bandwidth is wasted with circuit switching.
-    \item Packet switching allocates link use on demand whereas circuit-switching pre-allocates bandwidth.
+    \item An argument against \gls*{packet_switching} is that it is not suitable for real-time services (telephone calls, video conferencing) because of unpredictable end-to-end delays (due primarily to queueing delays).
+    \item An argument against \gls*{circuit_switching} is that it offers better sharing of transmission capacity.
+    \item \Gls*{packet_switching} is less costly to implement than \gls*{circuit_switching}.
+    \item During silent periods where no data is transmitted, bandwidth is wasted with \gls*{circuit_switching}.
+    \item \Gls{packet_switching} allocates link use on demand whereas \gls*{circuit_switching} pre-allocates bandwidth.
 \end{itemize}
 
 \subsection{Network Performance}
@@ -97,54 +97,54 @@
     \item Other than the ones mentioned below, end systems can also produce delays for example in packetization and depacketization of messages.
 \end{itemize}
 
-\subsubsection{Processing Delay}
+\paragraph{Processing Delay}
 
 \begin{itemize}
-    \item The time required to examine the packet's header and determine where send it forms part of the processing delay.
-    \item The processing delay may also include the time it takes for encapsulation and decapsulation of packet layer information.
+    \item The time required to examine the packet's header and determine where send it forms part of the \gls{processing_delay}.
+    \item The \gls*{processing_delay} may also include the time it takes for encapsulation and decapsulation of packet layer information.
     \item Devices processing the packet may also verify packet checksums to detect bit errors.
 \end{itemize}
 
-\subsubsection{Queueing Delay}
+\paragraph{Queueing Delay}
 
 \begin{itemize}
-    \item A packet experiences a queueing delay if it is ready to be transmitted onto a link but it has to wait (either there is a packet already in transmission or the queue is non-empty).
-    \item Queueing delays can be measured using the traffic intensity.
-    \item The traffic intensity is the ratio of the average rate at which bits arrive at a link to transmission rate that they are pushed out of the link.
+    \item A packet experiences a \gls{queueing_delay} if it is ready to be transmitted onto a link but it has to wait (either there is a packet already in transmission or the queue is non-empty).
+    \item \Glspl*{queueing_delay} can be measured using the traffic intensity.
+    \item The traffic intensity is the ratio of the average rate at which bits arrive at a link to the \gls*{transmission_rate} that they are pushed out of the link.
     \item A traffic intensity $> 1$ means that the packet queue will grow, whereas $\leq 1$ means the queue is stable or will shrink.
 \end{itemize}
 
-\subsubsection{Transmission Delay}
+\paragraph{Transmission Delay}
 
 \begin{itemize}
-    \item The transmission delay is the amount of time required to push all bits of a packet into a link.
+    \item The \gls{transmission_delay} is the amount of time required to push all bits of a packet into a link.
 \end{itemize} 
 
-\subsubsection{Propagation Delay}
+\paragraph{Propagation Delay}
 
 \begin{itemize}
-    \item The propagation delay is the amount of time required for a bit to travel across a link.
+    \item The \gls{propagation_delay} is the amount of time required for a bit to travel across a link.
     \item The speed at which the bit travels depends on the physical medium and thus so does the delay.
 \end{itemize}
 
 \subsubsection{Throughput}
 
 \begin{itemize}
-    \item Instantaneous throughput at any instant of time is the rate ($bits/sec$) at which a receiver is receiving bits from a sender that form part of a piece of data.
-    \item Average throughput measures the average rate at which a receiver is receiving bits from a sender that form part of a piece of data (the quotient of the total bits and total data transfer time).
+    \item \Gls{instantaneous_throughput} at any instant of time is the rate ($bits/sec$) at which a receiver is receiving bits from a sender that form part of a piece of data.
+    \item \Gls{average_throughput} measures the average rate at which a receiver is receiving bits from a sender that form part of a piece of data (the quotient of the total bits and total data transfer time).
 \end{itemize}
 
 \subsubsection{Factors Affecting Throughput}
 
 \begin{itemize}
-    \item From end-to-end, there are several links connecting packet switches.
-    \item One of these links may be a global bottleneck link i.e the link with the lowest transmission rate.
-    \item The throughput thus depends on the transmission rate of the bottleneck link as data cannot flow faster end-to-end than the bottleneck allows.
-    \item Throughput also depends on queueing delays. Example:
+    \item From end-to-end, there are several links connecting \glspl*{packet_switch}.
+    \item One of these links may be a global bottleneck link i.e the link with the lowest \gls*{transmission_rate}.
+    \item The \gls{throughput} thus depends on the \gls*{transmission_rate} of the bottleneck link as data cannot flow faster end-to-end than the bottleneck allows.
+    \item \Gls*{throughput} also depends on \glspl*{queueing_delay}. Example:
     \begin{itemize}
         \item 10 unrelated pieces of data / messages are being transmitted across a link.
         \item This means packets will get queued and the link has to share its capacity.
-        \item Assuming fair sharing of packets, the effective transmission rate of the link is now divided by 10 and so is the throughput across each message.
+        \item Assuming fair sharing of packets, the effective \gls*{transmission_rate} of the link is now divided by 10 and so is the \gls*{throughput} across each message.
     \end{itemize}
 \end{itemize}
 
@@ -152,289 +152,320 @@
 
 \subsection{HTTP}
 
-\subsubsection{Comparison to TCP HOL Blocking}
-
-\begin{itemize}
-    \item A TCP connection is a reliable, in-order, bidirectional stream of bytes.
-    \item When an application passes a byte stream to a TCP socket, it groups them in-order into segments.
-    \item The receiving side buffers incoming segments and reorders them if they arrive out of order.
-    \item The TCP socket on the recieving side will not deliver bytes to the application until all earlier bytes are present.
-    \item TCP will only deliver a contiguous prefix of the byte stream to the application. Example:
-    \begin{itemize}
-        \item A receiving side receives segments 2, 3, and 4.
-        \item It notices segment 1 is missing.
-        \item Then, it will request retransmission of segment 1 and won't deliver 2, 3, and 4 to the application.
-        \item Even though most data has arrived, TCP will wait and buffer it until all previous data has arrived.
-        \item This is transport-layer HOL blocking.
-    \end{itemize}
-\end{itemize}
-
-\subsection{HTTP/1.1}
+\subsubsection{HTTP/1.1}
 
 \paragraph{Without Pipelining}
 
 \begin{itemize}
-    \item Only one HTTP request can be handed off to a TCP socket / be in-flight at a time
-    \item The application must wait for the response before sending off the next request
-    \item Requests behave like a FIFO queue (no application-level HOL blocking)
+    \item Only one HTTP request can be handed off to a TCP socket / be in-flight at a time.
+    \item The application must wait for the response before sending off the next request.
+    \item Requests behave like a FIFO queue and \gls{hol} occurs because subsequent requests must wait for the earlier requests to return before they can be sent off.
 \end{itemize}
 
 \paragraph{With Pipelining}
 
 \begin{itemize}
-    \item Multiple HTTP requests can be handed off to a TCP socket / be in-flight at a time
-    \item Multiple responses can't be in-flight, only one at a time
-    \item On the server-side, responses are queued according to which requests arrive first (may not be the same order in which they were sent)
-    \item HOL block occurs because even if other responses are ready to go, they must wait for the current in-flight response to be delivered
+    \item \gls{http_pipelining} allows multiple HTTP requests to be handed off to a TCP socket / be in-flight at a time.
+    \item Multiple responses can't be in-flight, only one at a time.
+    \item On the server-side, responses are queued according to which requests arrive first (may not be the same order in which they were sent).
+    \item \gls*{hol} still occurs on the response side because even if other responses are ready to go, they must wait for the current in-flight response to be delivered.
 \end{itemize}
 
 \paragraph{Workarounds}
 
 \begin{itemize}
-    \item Browsers open multiple TCP connections per origin (6-8)
-    \item Requests are then spread across them
-    \item This helps but wastes resources, increases congestion, adds TCP overhead, and only reduces latency rather than eliminating HOL blocking
+    \item Modern browsers do not use pipelining and instead open multiple TCP connections per origin (6-8) which is more efficient.
+    \item Requests are then spread across them.
+    \item This helps but also wastes resources, increases congestion, adds TCP overhead, and only reduces latency rather than eliminating \gls*{hol}.
 \end{itemize}
 
 \subsubsection{HTTP/2}
 
 \begin{itemize}
-    \item HTTP/2 assigns request/response pairs a stream and an ID
-    \item It also breaks down its messages into frames at the application layer
-    \item Each frame is given the stream ID for the respective request/response
-    \item HTTP/2 takes frames from multiple streams and passes them to a TCP socket, interleaving them based on priority and flow control
-    \item If packet loss occurs, HOL blocking still occurs at the transport layer
-    \item Any buffered TCP segments have to wait for the earlier lost segment to be retransmitted
-    \item Any buffered, contiguous TCP segments that build up into frames ready for processing by HTTP/2 at the application layer also have to wait (this is blocking still at the transport-level, not application level)
+    \item HTTP/2 assigns request/response pairs a stream and an ID.
+    \item It also breaks down its messages into frames at the application layer.
+    \item Each frame is given the stream ID for the respective request/response.
+    \item HTTP/2 takes frames from multiple streams and passes them to a TCP socket, interleaving them based on priority and flow control.
+    \item If packet loss occurs, \gls*{hol} still occurs at the transport layer.
+    \item Any buffered TCP segments have to wait for the earlier lost segment to be retransmitted.
+    \item Any buffered, contiguous TCP segments that build up into frames ready for processing by HTTP/2 at the application layer also have to wait (this is blocking still at the transport-level, not application level).
 \end{itemize}
 
 \subsubsection{HTTP/3}
 
 \begin{itemize}
-    \item HTTP3 eliminates transport-layer blocking entirely
+    \item HTTP/3 eliminates transport-layer blocking entirely by using the QUIC protocol instead of TCP.
 \end{itemize}
 
 \subsection{SMTP}
 
 \begin{itemize}
-    \item A user agent allows a user to read, reply to, forward, save and compose e-mails
-    \item When a user sends a message from their user agent, the user agent sends it over to the user's mail server
-    \item The outgoing e-mail is placed in an outgoing message queue
-    \item The mail server sees it in the message queue and sends it over to the recipient's mail server via SMTP (which uses TCP)
-    \item The recipient's mail server receives the e-mail and places it in the recipient's mailbox
-    \item The recipient can then read the e-mail at their convenience
-    \item If more than one e-mail in the message queue goes to the same server, the client sends them over the same TCP connection
+    \item A user agent allows a user to read, reply to, forward, save and compose e-mails.
+    \item When a user sends a message from their user agent, the user agent sends it over to the user's mail server.
+    \item The outgoing e-mail is placed in an outgoing message queue.
+    \item The mail server sees it in the message queue and sends it over to the recipient's mail server via SMTP (which uses TCP).
+    \item The recipient's mail server receives the e-mail and places it in the recipient's mailbox.
+    \item The recipient can then read the e-mail at their convenience.
+    \item If more than one e-mail in the message queue goes to the same server, the client sends them over the same TCP connection.
 \end{itemize}
 
 \subsection{DNS}
 
 \begin{itemize}
-    \item The domain name system (DNS) is a distributed database implemented in a hierarchy of DNS servers
-    \item It is also an application-layer protocol that allows hosts to query the distributed database for hostnames that translate to IP addresses
-    \item End systems usually have DNS applications that perform the client-side of DNS (querying)
+    \item The Domain Name System (DNS) is a distributed database implemented in a hierarchy of DNS servers.
+    \item It is also an application-layer protocol that allows hosts to query the distributed database for hostnames that translate to IP addresses.
+    \item End systems usually have DNS applications that perform the client-side of DNS (querying).
 \end{itemize}
 
 \subsubsection{Services Provided by DNS}
 
+\paragraph{Host Aliasing}
+
 \begin{itemize}
-    \item Host aliasing:
-    \begin{itemize}
-        \item A hostname can also have one or more alias names that map to it (aliases)
-        \item The underlying hostname that maps to the IP is known as the canonical hostname
-    \end{itemize}
-    \item Load distribution:
-    \begin{itemize}
-        \item Web servers can have multiple replicas with each server running on a different end system
-        \item For replica web servers, a set of IP addresses is associated with a hostname
-        \item DNS queries for the hostname are replied with the entire set of IP addresses but the ordering is rotated
-        \item Clients typically use the IP address at the top of the list so rotation provides load distribution
-    \end{itemize}
+    \item A hostname can also have one or more alias names that map to it (aliases).
+    \item The underlying hostname that maps to the IP is known as the canonical hostname.
+\end{itemize}
+
+
+\paragraph{Load Distribution}
+
+\begin{itemize}
+    \item Web servers can have multiple replicas with each server running on a different end system.
+    \item For replica web servers, a set of IP addresses is associated with a hostname.
+    \item DNS queries for the hostname are replied with the entire set of IP addresses but the ordering is rotated.
+    \item Clients typically use the IP address at the top of the list so rotation provides load distribution.
 \end{itemize}
 
 \subsubsection{DNS Servers}
 
 \begin{itemize}
-    \item DNS queries can be recusrive or iterative
-    \item When a requesting host sends a query Q to a recursive resolver to make it on their behalf, query Q is recursive
-    \item When a requesting host makes a direct DNS query (say to a root server or TLD server) that forms part of a larger query Q, each subquery is iterative as they form part of a larger query and each gets returned to the requesting host
-    \item In practice, the path a DNS query takes follows the points given below
+    \item DNS queries can be \emph{recusrive} or \emph{iterative}.
+    \item When a requesting host sends a query $Q$ to a recursive resolver to resolve on their behalf, query $Q$ is a \gls{recursive_query}.
+    \item When a requesting host or recursive resolver makes a direct DNS query (say to a root server or TLD server) that forms part of a larger query $Q$, each subquery is an \gls{iterative_query} as they form part of a larger query and each gets returned to the requesting host.
+    \item In practice, the path a DNS query takes follows the points given below.
 \end{itemize}
 
 \paragraph{Root DNS Servers}
 
 \begin{itemize}
-    \item There are 1000+ root server instances across the world that are copies of 13 different root servers
-    \item The 13 servers are managed by 12 different organisations and coordinated by the Internet Assigned Numbers Authority (IANA)
-    \item Root servers provide the IP addresses of TLD servers
-    \item When a requesting host makes a query for a hostname, it will first contact a root server (an iterative query)
+    \item There are 1000+ root server instances across the world that are copies of 13 different root servers.
+    \item The 13 servers are managed by 12 different organisations and coordinated by the Internet Assigned Numbers Authority (IANA).
+    \item Root servers provide the IP addresses of TLD servers.
+    \item When a requesting host makes a query for a hostname, it will first contact a root server (an iterative query).
 \end{itemize}
 
 \paragraph{TLD Servers}
 
 \begin{itemize}
-    \item For each top-level domain, there is a TLD server (or server cluster)
-    \item TLD servers provide the IP addresses for authoritative DNS servers
-    \item When a client gets the IP address of a TLD server from a root server, it can then contact the TLD server for an authoritative name server (an iterative query)
-    \item TLD servers may not always know the authoritative name server and only an intermediate name server which knows the authoritative server (zone delegation)
+    \item For each top-level domain, there is a TLD server (or server cluster).
+    \item TLD servers provide the IP addresses for authoritative DNS servers.
+    \item When a client gets the IP address of a TLD server from a root server, it can then contact the TLD server for an authoritative name server (an iterative query).
+    \item TLD servers may not always know the authoritative name server and only an intermediate name server which knows the authoritative server (zone delegation).
 \end{itemize}
 
 \paragraph{Authoritative DNS Servers}
 
 \begin{itemize}
-    \item Authoritative DNS servers house DNS records that map names of publically accessible hosts to IP addresses
-    \item The owner of the hosts often pays service providers to have these records stored in their authoritative name servers (think Namecheap, Cloudflare, etc.)
-    \item When a requesting host gets the IP address of an authoritative name server from a TLD server, it can then contact the authorative name server for the IP address of the hostname (iterative query)
+    \item Authoritative DNS servers house DNS records that map names of publically accessible hosts to IP addresses.
+    \item The owner of the hosts often pays service providers to have these records stored in their authoritative name servers (think Namecheap, Cloudflare, etc.).
+    \item When a requesting host gets the IP address of an authoritative name server from a TLD server, it can then contact the authorative name server for the IP address of the hostname (iterative query).
 \end{itemize}
 
 \paragraph{Local DNS Servers}
 
 \begin{itemize}
-    \item ISPs have local DNS servers
-    \item When a host connects to an ISP, the ISP provides the host with the IP addresses of one or more of its local DNS servers that is close to the host
-    \item When hosts make DNS queries, they are typically sent to the local DNS server which acts as a proxy forwarding the query into the aformentioned hierarchy of root > TLD > authoritative
-    \item There also exist public DNS servers such as Google's (8.8.8.8) or Cloudflare's (1.1.1.1) which perform the same function
-    \item These types of servers are known as recursive resolvers, performing DNS queries on behalf of a requesting host
+    \item ISPs have local DNS servers.
+    \item When a host connects to an ISP, the ISP provides the host with the IP addresses of one or more of its local DNS servers that is close to the host.
+    \item When hosts make DNS queries, they are typically sent to the local DNS server which acts as a proxy forwarding the query into the aformentioned hierarchy of root $\Rightarrow$ TLD $\Rightarrow$ authoritative.
+    \item There also exist public DNS servers such as Google's (8.8.8.8) or Cloudflare's (1.1.1.1) which perform the same function.
+    \item These types of servers are known as recursive resolvers, performing DNS queries on behalf of a requesting host.
 \end{itemize}
 
 \subsubsection{DNS Caching}
 \begin{itemize}
-    \item When a resolver receives a reply to an iterative DNS query it caches the result locally
-    \item Resolvers discard cached DNS records after a certain time known as the Time-To-Live (TTL) set in the record itself
-    \item Common TTLs are 5mins, 1hr and 24hrs which mix flexibility and speed at varying levels
-    \item DNS record propagation means waiting for various caches around the world to expire with old records so the authoritative name server is queried again
-    \item End systems also maintain caches at the OS level (system-wide cache) as well as in web browsers or other applications that accesses the internet
-    \item When changing nameservers of a DNS record, records are being changed at the TLD level
-    \item These TLD servers often have a high non-configurable TTL (usually 48 hours) so any incoming queries will use cached records from the TLD instead of hitting the new nameserver
+    \item When a resolver receives a reply to an iterative DNS query it caches the result locally.
+    \item Resolvers discard cached DNS records after a certain time known as the Time-To-Live (TTL) set in the record itself.
+    \item Common TTLs are 5mins, 1hr and 24hrs which mix flexibility and speed at varying levels.
+    \item DNS record propagation means waiting for various caches around the world to expire with old records so the authoritative name server is queried again.
+    \item End systems also maintain caches at the OS level (system-wide cache) as well as in web browsers or other applications that accesses the internet.
+    \item When changing nameservers of a DNS record, records are being changed at the TLD level.
+    \item These TLD servers often have a high non-configurable TTL (usually 48 hours) so any incoming queries will use cached records from the TLD instead of hitting the new nameserver.
 \end{itemize}
 
 \subsubsection{DNS Records}
 
 \begin{itemize}
-    \item DNS servers store resource records (RRs)
-    \item A resource record contains 4 fields: name, value, type and TTL
-    \item MX records allows a company to point a hostname to another hostname of a mail server that handles mail for the original hostname
-    \item If a DNS server is authoritative it will contain A records for the hostname
-    \item If a server is not authoritative it will contain NS records for the domain that includes the hostname (a delegation)
-    \item It may also contain an A record that provides the IP address of that nameserver (glue)
-    \item Registrars enter DNS records into the DNS database
-    \item When registering a domain with a registrar, you have to provide the authoritative name servers (your provider may also provide them for you)
-    \item The registrar will then propagate an NS record and an A record into all of the servers for the respective TLD
+    \item DNS servers store resource records (RRs).
+    \item A resource record contains 4 fields: name, value, type and TTL.
+    \item MX records allows a company to point a hostname to another hostname of a mail server that handles mail for the original hostname.
+    \item If a DNS server is authoritative it will contain A records for the hostname.
+    \item If a server is not authoritative it will contain NS records for the domain that includes the hostname (a delegation).
+    \item It may also contain an A record that provides the IP address of that nameserver (glue).
+    \item Registrars enter DNS records into the DNS database.
+    \item When registering a domain with a registrar, you have to provide the authoritative name servers (your provider may also provide them for you).
+    \item The registrar will then propagate an NS record and an A record into all of the servers for the respective TLD.
 \end{itemize}
 
-\begin{longtable}{|l|l|l|}
-\hline
-\textbf{Type} & \textbf{Name} & \textbf{Value} \\ \hline
-A & A hostname for an IP address & The IP address \\ \hline
-NS & A domain (e.g foo.com) & The hostname of an authoritative name server that can resolve the domain \\ \hline
-CNAME & An alias hostname & The canonical hostname for the alias hostname \\ \hline
-MX & An alias hostname & The canonical hostname for the alias hostname of a mail server \\ \hline
-\end{longtable}
+\begin{table}
+    \centering
+    \begin{tabular}{|l|p{3cm}|p{6cm}|}
+        \hline
+        \textbf{Type} & \textbf{Name} & \textbf{Value} \\ \hline
+        A & A hostname for an IP address & The IP address \\ \hline
+        NS & A hostname & The hostname of an authoritative name server that can resolve the domain \\ \hline
+        CNAME & An alias hostname & The canonical hostname for the alias hostname \\ \hline
+        MX & An alias hostname & The canonical hostname for the alias hostname of a mail server \\ \hline
+    \end{tabular}
+    \caption{The name and type values for different types of DNS records.}
+
+\end{table}
 
 \subsubsection{DNS Message Structure}
 
 \begin{itemize}
-    \item DNS messages have the same structure for queries and replies
-    \item DNS messages use big endian byte ordering
-    \item DNS messages usually fit inside one UDP packet
-    \item DNS uses UDP becauses it quicker and lighter
-    \item If there's no response to a DNS query the client just retries
-    \item If the response is too big or truncated, the server sets the TC flag and the client retries using TCP
+    \item DNS messages have the same structure for queries and replies.
+    \item DNS messages use big endian byte ordering.
+    \item DNS messages usually fit inside one UDP packet.
+    \item DNS uses UDP becauses it quicker and lighter.
+    \item If there's no response to a DNS query the client just retries.
+    \item If the response is too big or truncated, the server sets the TC flag and the client retries using TCP.
 \end{itemize}
 
 \paragraph{Header}
+
 \begin{itemize}
-    \item The header of a DNS message is always 12 bytes
+    \item Size: 12 bytes
 \end{itemize}
 
-\paragraph{1. ID (2 bytes)}
+\subparagraph{ID}
+
 \begin{itemize}
+    \item Size: 2 bytes
     \item The first 2 bytes of the header is a 16-bit number that identifies the query and reply (same ID in each pair)
 \end{itemize}
 
-\paragraph{2. Flags (2 bytes)}
+\subparagraph{Flags}
 
-\begin{longtable}{|l|l|l|}
-\hline
-\textbf{Flag Name} & \textbf{Length} & \textbf{Description} \\ \hline
-QR & 1 bit & Query/Response: 0 = query, 1 = response \\ \hline
-Opcode & 4 bits & Operation code: 0 = Standard query, other codes \\ \hline
-AA & 1 bit & Authoritative Answer: (response only) Server is the authoritative server of a hostname \\ \hline
-TC & 1 bit & Truncated: 1 = Message was too large for UDP and was cut off \\ \hline
-RD & 1 bit & Recursion Desired: The server should perform recursive resolution \\ \hline
-RA & 1 bit & Recursion Available: (response only) Server supports recursion \\ \hline
-Z & 3 bits & Reserved: Must be 0, reserved for DNSSEC and future features \\ \hline
-RCODE & 4 bits & Response Code: 0 = No error, 3 = Name error (NXDOMAIN), other codes \\ \hline
-\end{longtable}
-
-\paragraph{3. QDCOUNT (2 bytes)}
 \begin{itemize}
-    \item The number of entries in the question section of a query
-    \item Is a 16-bit unsigned integer
-    \item Responses usually copy this value over from the query
+    \item Size: 2 bytes
 \end{itemize}
 
-\paragraph{4. ANCOUNT (2 bytes)}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|p{7cm}|}
+        \hline
+        \textbf{Flag Name} & \textbf{Length} & \textbf{Description} \\ \hline
+        QR & 1 bit & Query/Response: 0 = query, 1 = response \\ \hline
+        Opcode & 4 bits & Operation code: 0 = Standard query, other codes \\ \hline
+        AA & 1 bit & Authoritative Answer (response only): Server is the authoritative server of a hostname \\ \hline
+        TC & 1 bit & Truncated: 1 = Message was too large for UDP and was cut off \\ \hline
+        RD & 1 bit & Recursion Desired: The server should perform recursive resolution \\ \hline
+        RA & 1 bit & Recursion Available (response only): Server supports recursion \\ \hline
+        Z & 3 bits & Reserved: Must be 0, reserved for DNSSEC and future features \\ \hline
+        RCODE & 4 bits & Response Code: 0 = No error, 3 = Name error (NXDOMAIN), other codes \\ \hline
+    \end{tabular}
+\end{table}
+
+\subparagraph{QDCOUNT}
 \begin{itemize}
-    \item The number of resource records in the answers section
-    \item Is a 16-bit unsigned integer (0 in a query)
+    \item Size: 2 bytes
+    \item The number of entries in the question section of a query.
+    \item Is a 16-bit unsigned integer.
+    \item Responses usually copy this value over from the query.
 \end{itemize}
 
-\paragraph{5. NSCOUNT (2 bytes)}
+\subparagraph{ANCOUNT}
 \begin{itemize}
-    \item The number of resource records in the authority section
-    \item Is a 16-bit unsigned integer (0 in a query)
+    \item Size: 2 bytes
+    \item The number of resource records in the answers section.
+    \item Is a 16-bit unsigned integer (0 in a query).
 \end{itemize}
 
-\paragraph{6. Additional Record Count (2 bytes)}
+\subparagraph{NSCOUNT}
 \begin{itemize}
-    \item The number of resource records in the additional section
-    \item Is a 16-bit unsigned integer (0 in a query)
+    \item Size: 2 bytes
+    \item The number of resource records in the authority section.
+    \item Is a 16-bit unsigned integer (0 in a query).
+\end{itemize}
+
+\subparagraph{Additional Record Count}
+\begin{itemize}
+    \item Size: 2 bytes
+    \item The number of resource records in the additional section.
+    \item Is a 16-bit unsigned integer (0 in a query).
 \end{itemize}
 
 \paragraph{Question Section}
 \begin{itemize}
-    \item There are QDCOUNT questions
-    \item Each question is formed by a QNAME, a QTYPE and a QCLASS
-    \item The QNAME of a question is a sequence of labels, each label is a sequence of 1-byte ASCII characters prefixed by a length byte indicating the length of the label (characters only)
-    \item The QNAME is terminated by a zero-length label (0x00)
-    \item The QTYPE is a 16-bit unsigned integer and represents what record is being asked for (A=1, AAAA=28, MX=15, etc.)
-    \item The QCLASS is a 16-bit unsigned integer, usually 1=IN (Internet)
+    \item There are QDCOUNT questions.
+    \item Each question is formed by a QNAME, a QTYPE and a QCLASS.
+    \item The QNAME of a question is a sequence of labels, each label is a sequence of 1-byte ASCII characters prefixed by a length byte indicating the length of the label (characters only).
+    \item The QNAME is terminated by a zero-length label (\texttt{0x00}).
+    \item The QTYPE is a 16-bit unsigned integer and represents what record is being asked for (A=1, AAAA=28, MX=15, etc.).
+    \item The QCLASS is a 16-bit unsigned integer, usually 1=IN (Internet).
 \end{itemize}
 
 \paragraph{Resource Record Sections}
 \begin{itemize}
-    \item All other sections use the same format
-    \item They are composed of the resource records that the server responds with (each record includes the name, type, value and TTL of the record)
+    \item All other sections use the same format (answer section, authority section, additional sections).
+    \item They are composed of the resource records that the server responds with (each record includes the name, type, value and TTL of the record).
 \end{itemize}
 
 \paragraph{Common Response Scenarios}
 
-\begin{longtable}{|l|p{5cm}|l|l|p{3cm}|}
-\hline
-\textbf{Scenario} & \textbf{Description} & \textbf{Answer Section} & \textbf{Authority Section} & \textbf{Additional Section} \\ \hline
-Successful lookup & Server is authoritative for the name and record type & Requestd RRs & & Optional helper RRs \\ \hline
-CNAME & Queried name is an alias and points to another name that must be resolved & CNAME record (and possible final RR) & & Optional helper RRs \\ \hline
-Delegation (referral) & Server is not authoritative and tells resolver where to ask next & & NS records for child zone & Potential glue records for NS \\ \hline
-NXDOMAIN & Queried name doesn't exist in the authoritative zone & & SOA of authoritative zone & \\ \hline
-NODATA & The name exists but the requestd record type doesn't & & SOA of authoritative zone & \\ \hline
-\end{longtable}
+\subparagraph{Successful Lookup}
+
+\begin{itemize}
+    \item Server is authoritative for the name and record type.
+    \item Answer section: Contains the requested RRs.
+    \item Additional section: May contain optional helper RRs.
+\end{itemize}
+
+\subparagraph{CNAME}
+
+\begin{itemize}
+    \item Queried name is an alias and points to another name that must be resolved.
+    \item Answer section: CNAME record (and possible final RR).
+    \item Additional section: Optional helper RRs.
+\end{itemize}
+
+\subparagraph{Delegation (referral)}
+
+\begin{itemize}
+    \item Server is not authoritative and tells resolver where to ask next.
+    \item Authority section: NS records for child zone \item Additional section: Potential glue records for NS.
+\end{itemize}
+
+\subparagraph{NXDOMAIN}
+
+\begin{itemize}
+    \item Queried name doesn't exist in the authoritative zone.
+    \item Authority section: SOA of authoritative zone.
+\end{itemize}
+
+\subparagraph{NODATA}
+
+\begin{itemize}
+    \item The name exists in the authoritative zone but the requested record type doesn't.
+    \item Authority section: SOA of authoritative zone.
+\end{itemize}
 
 \subsubsection{DNS Zones}
 \begin{itemize}
-    \item A DNS zone is a portion of the DNS namespace that a DNS server is authoritative for
-    \item It contains authoritative A records for the domains it manages
-    \item It can also contain delegation records (NS records) for child zones
-    \item A zone file is a file stored at the authoritative server that stores all DNS records for the zone (acting as the database)
-    \item The apex is the topmost domain name in a DNS zone
+    \item A \gls{dns_zone} is a portion of the DNS namespace that a DNS server is authoritative for.
+    \item It contains authoritative A records for the domains it manages.
+    \item It can also contain delegation records (NS records) for child zones.
+    \item A zone file is a file stored at the authoritative server that stores all DNS records for the zone (acting as the database).
+    \item The apex is the topmost domain name in a \gls*{dns_zone}.
 \end{itemize}
 
 \paragraph{Zone Delegation}
 \begin{itemize}
-    \item A DNS server A can delegate a portion of its namespace to another DNS server B, creating a zone
-    \item This is done by creating an NS record in A to point to another authoritative server B for one of A's domains (e.g sub.example.com)
-    \item Now server B is the authority for the domain and its subdomains
-    \item In order to remove circular dependency for this record, a glue record (A type) may be added
-    \item Glue records are not authoritative and the authoritative source is the child zone authoritative server
+    \item A DNS server $A$ can delegate a portion of its namespace to another DNS server $B$, creating a zone.
+    \item This is done by creating an NS record in $A$ to point to another authoritative server $B$ for one of $A$'s domains (e.g sub.example.com).
+    \item Now server $B$ is the authority for the domain and its subdomains.
+    \item In order to remove circular dependency for this record, a glue record (A type) may be added to $A$.
+    \item Glue records are not authoritative and the authoritative source is the child zone authoritative server ($B$).
 \end{itemize}
 
 \begin{figure}[H]
@@ -445,8 +476,8 @@ NODATA & The name exists but the requestd record type doesn't & & SOA of authori
 
 \paragraph{SOA (Start of Authority) Record}
 \begin{itemize}
-    \item Every DNS zone has exactly one SOA record located at the authoritative server for that zone
-    \item This record tells who is authoritative for the zone, how secondary servers keep the zone in sync and how long to cache negative answers
+    \item Every \gls*{dns_zone} has exactly one SOA record located at the authoritative server for that zone.
+    \item This record tells who is authoritative for the zone, how secondary servers keep the zone in sync, and how long to cache negative answers.
 \end{itemize}
 
 \section{The Transport Layer}
@@ -1099,7 +1130,7 @@ NODATA & The name exists but the requestd record type doesn't & & SOA of authori
         \item 4-50kHz band: medium-speed upstream data channel.
         \item 50kHz-1MHz: high-speed upstream data. channel
     \end{itemize}
-    - On the customer side, a splitter splits data and telephone signals and forwards data signals to the modem.
+    \item On the customer side, a splitter splits data and telephone signals and forwards data signals to the modem.
 \end{itemize}
 
 \subsubsection{Cable Internet}
