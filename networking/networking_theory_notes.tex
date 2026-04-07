@@ -878,7 +878,7 @@
     \item The internet's network layer provides a single service known as best-effort service where no guarantees are made (e.g on delivery, delay, in-order delivery, etc).
 \end{itemize}
 
-\subsection{What's Inside a Router}
+\subsection{Routers}
 
 \subsubsection{Components}
 
@@ -921,11 +921,33 @@
     \item The routing processor also performs network management functions.
 \end{itemize}
 
-\subsubsection{Input Port Processing \& Destination-Based Forwarding}
+\subsubsection{Input Port Processing}
 
 \begin{itemize}
     \item Input port processing and destination-based forwarding consist of the following functions at input ports.
     \item Other aspects of  processing like blocking, \\ queueing, and scheduling of packets at both entry and exit of the input port are also managed at input ports.
+\end{itemize}
+
+
+\paragraph{Physical-Layer Processing}
+
+\begin{itemize}
+    \item The input port must demodulate the phsyical signals of a packet into a digital representation i.e the layer 2 packet in the input port memory.
+\end{itemize}
+
+\paragraph{Link Layer Processing}
+
+\begin{itemize}
+    \item The router performs a CRC for the FCS in the link-layer frame to check data integrity.
+    \item The router checks that the MAC address is for the intended router.
+    \item The link-layer frame must also be decapsulated into an IP packet.
+\end{itemize}
+
+\paragraph{IP Processing}
+
+\begin{itemize}
+    \item The IP packet's checksum is verified.
+    \item The destination (IP) is identified in order to perform lookup.
 \end{itemize}
 
 \paragraph{Lookup}
@@ -937,30 +959,8 @@
     \item Instead of a forwarding table holding, say, 4 billion IP addresses, it can have ranges of IP addresses corresponding to each of its outgoing links.
     \item This involves using a prefix to match a range of IP addresses with the same prefix.
     \item When there are multiple matching prefixes, the router uses the \emph{longest prefix matching rule}.
+    \item The router uses the forwarding table to look up which output port the IP packet must be forwarded to.
 \end{itemize} 
-
-
-
-\paragraph{Physical-Layer Processing}
-
-\begin{itemize}
-    \item The input port must demodulate the phsyical signals of a packet into a digital representation.
-\end{itemize}
-
-
-\paragraph{Link Layer Processing}
-
-\begin{itemize}
-    \item The router performs a CRC for the FCS in the link-layer frame.
-    \item The link-layer frame must also be decapsulated.
-\end{itemize}
-
-\paragraph{IP Processing}
-
-\begin{itemize}
-    \item The packet's version number, checksum and TTL must be updated.
-    \item The destination (IP) must be identified in order to perform lookup.
-\end{itemize}
 
 \subsubsection{Switching}
 
@@ -990,8 +990,74 @@
     \item Each crosspoint can be opened or closed by the switch fabric controller to connect a horizontal and vertical bus.
     \item Thus, \textbf{only one} crosspoint needs to be closed for an input port attached to a horiztonal bus to be passed onto the vertical bus at that crosspoint (the electrical signal will always travel the full width of the bus but only be picked up by the closed crosspoint).
     \item Crossbar switches are non-blocking meaning so long as two packets wanting to be transmitted each belong to a different input and output port, blocking will not occur as the buses are independent of each other.
+    \item If two input ports want to each send a packet to the same output port, this is known as \gls{output_port_contention}.
 \end{itemize}
 
+\subsubsection{Queuing}
+
+\begin{itemize}
+    \item Queuing occurs both at input ports and output ports of a router.
+    \item Memory at ports can be exhausted as queues grow larger causing packet loss.
+\end{itemize}
+
+\paragraph{\Gls*{hol} in Input Queues}
+
+\begin{itemize}
+    \item Assume we have a single FIFO input queue at a router input port.
+    \item The first packet in the queue (head) wants to go to output port A but port A is currently unable to receive it (e.g bus might be busy).
+    \item The second packet in the queue wants to go to output port B which is idle and ready to receive data.
+    \item Thus, the second packet is blocked from being switched and must wait for the blockage to clear up before being able to do so.
+\end{itemize}
+
+\paragraph{Output Queuing}
+\begin{itemize}
+    \item Assume a switching fabric is $N$ times faster than an outgoing link.
+    \item $N$ packets could arrive at the output port in the time it takes to transmit only 1 packet.
+    \item Thus, a queue could grow without bound and exhaust all memory at an output port.
+    \item When there is insufficient memory to buffer an incoming packet, a decision is made to either drop the arriving packet (know as \emph{tail-drop}) or remove a buffered packet to make room for the new packet.
+    \item In some cases, a packet is intentionally dropped (or the header marked with congestion bits) before the buffer is full to signal network congestion to the sender.
+    \item A consequence of output queuing is that a \emph{packet scheduler} at the output port must choose one queued packet for transmission.
+\end{itemize}
+
+\paragraph{Bufferbloat}
+\begin{itemize}
+    \item Bufferbloat is a phenomenon where a network link becomes extremely slow because a router between the sender and receiver has a memory buffer that is too large and always full.
+    \item Buffers are designed to prevent packet loss during bursts however buffers that are too large can force every incoming packet to suffer a \gls*{queueing_delay}.
+    \item In a healthy network buffers should be empty most of the time and only fill up momentarily during a traffic spike.
+    \item TCP is designed to regulate its transmission rate when packets are\\ dropped.
+    \item If a router is suffering bufferbloat, it will rarely drop packets and TCP will think that the path is clear to keep sending packets.
+\end{itemize}
+
+\subsubsection{Packet Scheduling}
+
+\paragraph{Priority Queuing}
+
+\begin{itemize}
+    \item Priority queueing is a packet scheduling mechanism that creates multiple different FIFO queues of packets for different priority classes.
+    \item For example, prioritisation may involve specific TCP/UDP port numbers carrying network management information, or real-time vs non-real-time.
+    \item When choosing a packet to transmit, the scheduler will transmit a packet from the highest priority class that has a non-empty queue.
+\end{itemize}
+
+\paragraph{Round Robin Queuing}
+
+\begin{itemize}
+    \item Round robin queuing is much like priority queuing.
+    \item However packet selection cycles through each of the classes, transmitting the first packet in each queue (if there is one) before repeating the cycle.
+\end{itemize}
+
+\paragraph{Weighted Fair Queuing (WFQ)}
+
+\begin{itemize}
+    \item WFQ is a packet scheduling mechanism commonly used in routers which is much like round robin queuing, serving classes in a circular manner.
+    \item A router can be configured to apply different weights to different types of traffic.
+    \item High weights mean low priority (e.g background updates), low weights mean high priority (e.g real-time packets).
+    \item The share of the bandwidth is calculated with the following formula:
+    \begin{center}
+        Bandwidth Share of Queue$_i$ = $\dfrac{\frac{1}{W_i}}{\sum \frac{1}{W_j}}$
+    \end{center}
+    \item For example, if you have two queues A with a weight of 1 and B with a weight of 2, share$_A$ = 0.66 (66\%) and share$_B$ = 0.33 (or 33\%).
+    \item WFQ is \emph{work-conserving} meaning if certain queues are empty, the link will not sit idly for the amount of bandwidth allocated to that queue and will instead pass it to other queues. The weight only kicks in during congestion when there are competing queues.
+\end{itemize}
 
 \section{The Data Link Layer}
 
