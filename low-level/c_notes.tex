@@ -1,0 +1,344 @@
+\documentclass{article}
+
+\title{Notes on The C Programming Language}
+\author{Nicoll Douglas}
+
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{tablefootnote}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    numbers=left,
+    breaklines=true
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{Types, Operators \& Expressions}
+
+\subsection{Variable Names}
+
+\begin{itemize}
+    \item Must only contain letters, digits, and underscores.
+    \item Must start with a letter or underscore\footnote{Library functions often start with underscores so avoid.}.
+\end{itemize}
+
+\subsection{Data Types and Sizes}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Type} & \textbf{Size (bytes)} & \textbf{Description} \\
+        \hline
+        \code{char} & 1 & Holds one character \\
+        \code{short} / \code{short int} & 2\tablefootnote{C standard minimum 2 bytes, typically 2 bytes.} & Smaller integer \\
+        \code{int} & 4\tablefootnote{C standard minimum 2 bytes and at least as big as \code{short}; typically 4 bytes.} & Natural integer size on host machine \\
+        \code{long} / \code{long int} & 8\tablefootnote{C standard minimum 4 bytes and at least as big as \code{int}; typically 8 bytes.} & Bigger integer \\
+        \code{float} & 4 & Single-precision floating point \\
+        \code{double} & 8 & Double-precision floating point \\
+        \code{long double} & 16\tablefootnote{C standard at least as long as \code{double}; usually 8, 12 or 16 bytes.} & Extended-precision floating-point \\
+        \hline
+    \end{tabular}
+    \caption{Type, size, and description of primitive data types in C}
+\end{table}
+
+\begin{itemize}
+    \item The \code{signed} or \code{unsigned} qualifiers may be applied to \code{char} or any integer type.
+    \item \code{unsigned} integers are positive or 0.
+    \item \code{unsigned} integers obey the laws of arithmetic module $2^n$ where $n$ is the number of bits in the data type.
+    \item \code{int}, \code{short}, and \code{long} are all signed by default.
+    \item \code{char} can be \code{unsigned} or \code{signed} by default (not mandated in C standard) but is usually \code{signed}.
+\end{itemize}
+
+\subsection{Constants}
+
+\subsubsection{Integer Constants}
+
+\paragraph{Suffixes} Integer constants may contain the given suffixes indicated below.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|p{4cm}|p{4cm}|l|}
+        \hline
+        \textbf{Suffix} & \textbf{Type} & \textbf{Examples} \\
+        \hline
+        None, only digits & \code{int} (\code{long} if too big) & \code{1234} \\
+        \code{l} or \code{L} & \code{long} & \code
+        {1234L} \\
+        \code{u} or \code{U} & \code{unsigned int} (\code{unsigned long} if too big) & \code{1234U} \\
+        \code{ul} or \code{UL} & \code{unsigned long} & \code{1234UL} \\
+        None, with decimal or scientific & \code{double} & \code{1.234}, \code{1e-5} \\
+        \code{f} or \code{F} & \code{float} & \code{1.234F} \\
+        \code{l} or \code{L}, with decimal or scientific & \code{long double} & \code{1.234L}, \code{1e-5L} \\
+        \hline
+    \end{tabular}
+    \caption{Data type and examples of integers using the given suffix}
+\end{table}
+
+\paragraph{Prefixes} Integer constants may contain the given prefixes below. These can also be used in conjunction with appropriate suffixes (those available for integers).
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Prefix} & \textbf{Interpretation} \\
+        \hline
+        None & Decimal \\
+        \code{0} & Octal \\
+        \code{0x} or \code{0X} & Hexadecimal \\
+        \hline
+    \end{tabular}
+    \caption{Interpretations of integer constants with the given prefix}
+\end{table}
+
+\subsubsection{Character Constants}
+
+\begin{itemize}
+    \item Character constants are integers written as one character with single quotes and are equal to the numeric value in the machine's character set.
+    \item Character constants can also participate in arithemtic operations like other integer types.
+\end{itemize}
+
+\paragraph{Escape Sequences} Certain characters can be represented by the following escape sequences.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{Sequence} & \textbf{Meaning} & \textbf{ASCII Code} \\
+        \hline
+        \code{\textbackslash 0} & Null character & 0 \\
+        \code{\textbackslash a} & Alert (bell) character & 7 \\
+        \code{\textbackslash b} & Backspace & 8 \\
+        \code{\textbackslash t} & Horizontal tab & 9 \\
+        \code{\textbackslash n} & Line feed (newline) & 10 \\
+        \code{\textbackslash v} & Vertical tab & 11 \\
+        \code{\textbackslash f} & Form feed & 12 \\
+        \code{\textbackslash r} & Carriage return & 13 \\
+        \code{\textbackslash "} & Double quote & 34 \\
+        \code{\textbackslash '} & Single quote & 39 \\
+        \code{\textbackslash ?} & Question mark & 63 \\
+        \code{\textbackslash \textbackslash} & Backslash & 92 \\
+        \code{\textbackslash ooo} & Octal code (o = octal digit) & \\
+        \code{\textbackslash xhh} & Hex code (h = hex digit) & \\
+        \hline
+    \end{tabular}
+    \caption{Different escape sequences, their meaning, and ASCII codes in C}
+\end{table}
+
+\subsubsection{Constant Expressions}
+
+\begin{itemize}
+    \item Constant expressions are expressions that involve only constants.
+    \item Such expressions are typically evaluated at compile-time and can be used in any place that a constant can occur.
+\end{itemize}
+
+Example:
+
+\begin{lstlisting}
+#define LEAP 1;
+
+int days[31+28+LEAP+31+30+31+30+31+31+30+31+30+31];
+\end{lstlisting}
+
+\subsubsection{String Constants}
+
+\begin{itemize}
+    \item A string constant (a.k.a. a string literal) is a sequence of 0 or more characters surrounded by double quotes.
+    \item The escape sequences used in characters also apply in strings.
+    \item String constants can be concatenated at compile-time, e.g \\\code{"hello, world"} is equivalent to \code{"hello ," " world"}.
+    \item This is useful for breaking up long strings across several lines of code.
+\end{itemize}
+
+\subsubsection{Enum Constants}
+
+\begin{itemize}
+    \item An enum is a list of constant integer values.
+    \item Names in enums \emph{must} be distinct.
+    \item Values in enums don't need to be distinct.
+    \item If values are left unassigned, they increase in order from the leftmost assigned value (the first will be 0 if unassigned).
+\end{itemize}
+
+Examples:
+
+\begin{lstlisting}
+enum boolean { NO, YES }; // NO=0, YES=1
+enum letters { A = 10, B, C }; // A=10, B=11, C=12
+enum letters2 { A, B = 50, C }; // A=0, B=50, C=51
+\end{lstlisting}
+
+\subsection{Declarations}
+
+\begin{itemize}
+    \item All variable declarations must be at the top of a code block before executable statements and declared before use.\footnote{Specific to C89/90.}
+    \item A declaration contains a list of one or more variables of that type which may optionally be assigned.
+    \item Automatic variables are local variables that are automatically allocated when the program enters the code block they are defined in.
+    \item If a variable is not automatic, its initialization is done only once (before the program starts executing).
+    \item Otherwise, it is initialised each time its code block is entered.
+    \item External and \code{static} variables are initialised to 0 by default.
+    \item Automatic variables with no initializer are undefined (garbage bits leftover in memory).
+    \item The \code{const} qualifier can be applied to a variable declaration to specify its value will not be changed (for arrays the element will not be altered).
+    \item \code{const} can also be used with function arguments to indicate that the function will not change, or reassign the local copy of the value passed.
+\end{itemize}
+
+Automatic variable examples:
+
+\begin{lstlisting}
+int a, b, c = 10; // a and b are undefined
+const int d = 20; // will not be changed
+\end{lstlisting}
+
+\subsection{Operators}
+
+\paragraph{Precedence} Operator precedence is defined according to the following table:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|l|p{5cm}|c|}
+        \hline
+        \textbf{Rank} & \textbf{Category} & \textbf{Operators} & \textbf{Association} \\
+        \hline
+        1 & Postfix & \code{++}, \code{--}, \code{()}, \code{[]}, \code{->}, \code{.} & LTR \\
+        \hline
+        2 & Prefix & \code{+}, \code{-}, \code{++}, \code{--}, \code{!}, \code{~} & RTL \\
+        \hline
+        3 & Multiplicative & \code{*}, \code{/}, \code{\%} & LTR \\
+        \hline
+        4 & Additive & \code{+}, \code{-} & LTR \\
+        \hline
+        5 & Bit Shift & \code{<<}, \code{>>} & LTR \\
+        \hline
+        6 & Relational & \code{<}, \code{<=}, \code{>}, \code{>=} & LTR \\
+        \hline
+        7 & Equality & \code{==}, \code{!=} & LTR \\
+        \hline
+        8 & Bitwise AND & \code{\&} & LTR \\
+        \hline
+        9 & Bitwise XOR & \code{\^} & LTR \\
+        \hline
+        10 & Bitwise OR & \code{|} & LTR \\
+        \hline
+        11 & Logical AND & \code{\&\&} & LTR \\
+        \hline
+        12 & Logical OR & \code{||} & LTR \\
+        \hline
+        13 & Ternary & \code{?:} & RTL \\
+        \hline
+        14 & Assignment & \code{=}, \code{+=}, \code{-=}, \code{*=}, \code{/=}, \code{\%=}, \code{\&=}, \code{\^{}=}, \code{|=}, \code{<<=}, \code{>>=} & RTL \\
+        \hline
+        15 & Comma & \code{,} & LTR \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\paragraph{Arithmetic Operators}
+
+\begin{itemize}
+    \item Arithmetic operators consist of the additive and multiplicative operators.
+    \item The \code{\%} operator cannot be applied to floats or doubles.
+    \item The direction for truncation for \code{/} is towards zero.\footnote{In the C89/90 standard it is implementation dependent, can be towards zero or negative infinity but typically zero in modern standards.}
+    \item The C standard requires that $(a / b)\cdot b + (a \% b) == a$ where $/$ is floor division.
+    \item The sign of the result for \code{\%} usually takes on the sign of the dividend ($a$ for $a \% b$) as a result of \code{/} truncating towards zero.\footnote{For truncation towards negative infinity the sign of modulo results take on the sign of the divisor.}
+\end{itemize}
+
+\paragraph{Relational and Logical Operators}
+
+\begin{itemize}
+    \item The numerical value of expressions involving relational and logical operators is \code{1} if the expression is true or \code{0} if false.
+\end{itemize}
+
+\paragraph{Increment and Decrement Operators}
+
+\begin{itemize}
+    \item Prefix increment/decrement \emph{modifies the value then consumes}.
+    \item Postfix increment/decrement \emph{consumes the value then modifies}.
+    \item Increment/decrement operators can only be applied to variables (not expressions).
+\end{itemize}
+
+\paragraph{Bitwise Operators}
+
+\begin{itemize}
+    \item Bitwise operators may only be used on integer type operands.
+    \item Bitwise AND is often used to mask off some bits (e.g \code{n \&= 0xF} sets all bits to \code{0} except the 4 lowest order bits).
+    \item Bitwise OR is often to use to turn bits on (e.g \code{n |= 0xF} turns on the 4 lowest order bits).
+    \item Shift operators \code{<<} and \code{>>} shift the bits up and down respectively of the left-hand operator by the non-negative amount in the right-hand operator (e.g \code{2 << 2} = \code{8} since \code{0010} becomes \code{1000}).
+    \item Vacant bits after shifting are filled with 0s usually.
+\end{itemize}
+
+\paragraph{Ternary Operator}
+
+\begin{itemize}
+    \item The first expression of a ternary operator expression is evaluated.
+    \item If the first is non-zero (true), the second is evaluated and that is the value of the ternary expression, otherwise (if it is false) the third expression is evaluated and \emph{that} is the value of the ternary expression.
+    \item If the second and third expressions differ in type, then type conversion occurs based on the type conversion rules in the next section.
+\end{itemize}
+
+\subsection{Type Conversions}
+
+\begin{itemize}
+    \item Type conversions take place in things like expressions and assignments.
+    \item Function prototypes enable automatic casting of arguments.
+\end{itemize}
+
+\subsubsection{Integer Promotion}
+
+\begin{itemize}
+    \item When a smaller rank is used in a binary arithmetic operation, it is automatically promoted to the larger rank used in the expression (promotion).
+    \item So the operation can be performed as if it was on two operands of the same type.
+    \item In an expression, type conversion happens incrementally along the way as the expression is evaluated according to associativity of each operator.
+    \item \code{char}s and \code{short}s are always promoted to \code{int} (\code{signed}) in an expression.
+\end{itemize}
+
+\subsubsection{Order of Type Conversion Operations}
+
+\begin{enumerate}
+    \item \code{char}s and \code{short}s are promoted to \code{int} and any other integer promotion goes through.
+    \item Signs are then compared using the size of the original types before promotion (\code{int} if originally \code{char} or \code{short}).
+    \item If $a$ is \textbf{unsigned} and has size $\geq$ than $b$, a \textbf{signed} type, $b$ becomes unsigned.
+    \item If $a$ is \textbf{unsigned} and has size < than $b$, a \textbf{signed} type, $a$ becomes signed.\footnote{The positive signed range of type $b$ usually matches the unsigned range of $a$, with the type of $b$ having twice the number of bits.}
+\end{enumerate}
+
+\subsubsection{Sign Extension and Zero Extension}
+
+\begin{itemize}
+    \item When a smaller type is unsigned and promoted, the program performs \emph{zero extension} i.e, fills the new high-order bits with 0s.
+    \item When a smaller type is signed and promoted, the program performs \emph{sign extension} i.e, fills the new high-order bits with whatever the old two's complement sign bit was (0 if positive, 1 if negative).
+    \item Each of these operations preserves the original value but the actual value depends on the new interpretation (i.e signed or unsigned).
+\end{itemize}
+
+\subsubsection{Truncation}
+
+\begin{itemize}
+    \item Larger integer types are converted to smaller ones by chopping off the excess higher order bits.
+\end{itemize}
+
+\subsubsection{Floats}
+
+\begin{itemize}
+    \item If integer types are mixed with float types, the float type always wins.
+    \item If the integer type is larger than the float type, precision loss may occur.
+\end{itemize}
+
+\subsubsection{Casting}
+
+\begin{itemize}
+    \item An expression can be forcibly cast to another type.
+    \item A cast behaves the same way as if an expression was being assigned to a variable of the cast type.
+    \item Casting uses the following syntax:
+    \begin{center}
+        \textit{(type name) expression}
+    \end{center}
+\end{itemize}
+
+\end{document}
