@@ -1,5 +1,13 @@
 networking:
-    - Finish book
+    * Finish book
+    - Packet tracer / GNS3?
+    - Study for CCNA
+    - Homelabbing
 
 low-level:
-    - Finish C book
+    * Finish C book
+
+linux:
+    * Convert markdown to LaTeX
+    * Follow Linux roadmap
+    
