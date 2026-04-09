@@ -1,0 +1,651 @@
+\documentclass{article}
+
+\title{Linux Notes}
+\author{Nicoll Douglas}
+
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{tablefootnote}
+\usepackage{listings}
+\usepackage[svgnames]{xcolor}
+\usepackage[expansion=false]{microtype}
+\usepackage{menukeys}
+\usepackage{hyperref}
+
+\hypersetup{
+    hidelinks
+}
+
+\DisableLigatures[>,<]{encoding = T1, family = tt* }
+
+\lstset{
+    language=Bash,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{DarkGreen},
+    commentstyle=\color{gray},
+    breaklines=true
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\home}[1]{\code{\textasciitilde #1}}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\section{The Shell}
+
+\subsection{Shell Types}
+
+\subsubsection{Login Shells}
+
+\begin{itemize}
+    \item A login shell is a shell that starts a user session. Login shells are usually created when you:
+    \begin{itemize}
+        \item Log in to a virtual console to interface with your machine (a tty device).
+        \item SSH into a machine.
+        \item Log in via a display manager.
+    \end{itemize}
+    \item They typically read and execute the system-wide login shell initialization file \code{/etc/profile} and the per-user login initialization \home{/.profile} (or \home{/.bash\_login} or \home{/.bash\_profile}).
+\end{itemize}
+
+\subsubsection{Interactive Shell}
+
+\begin{itemize}
+    \item A shell where you can type in commands.
+    \item Can be a login or non-login shell.
+    \item Reads and executes the system-wide shell initialization file \\\home{/etc/bash.bashrc} (Debian/Ubuntu) and the per-user initialization \\\home{/.bashrc}.
+    \item Non-interactive shells don't have interactive features.
+\end{itemize}
+
+\subsection{Shell Behaviour}
+
+\subsubsection{Environment Variables}
+
+\begin{itemize}
+    \item Shell variables only exist in the current shell.
+    \item Environment variables are part of the environment (they are exported variables).
+    \item When you start a child process from a shell it inherits all current environment variables.
+    \item When you run a command in a shell, the shell process forks itself and then loads a new program into the process memory as standard in Linux.
+    \item This way the child process inherits things like environment variables, open file descriptors, cwd, etc.
+    \item The child process will get a new process ID.
+    \item The child process will run in the foreground (shell waits for it to finish).
+    \item The child process can also be run in the background (shell doesn't wait for it to finish, child runs async).
+    \item When you run a script with \code{source}, no child process is created, it runs in the context of the current shell (things like cd and changes to environment variables affect the current shell).
+    \item When the script exits, control is handed back to the origin shell/script and it will keep running.
+\end{itemize}
+
+\subsubsection{\code{exec}}
+
+\begin{itemize}
+    \item If you use \code{exec} to run a command/program, no new processes are forked, instead the shell gets replaced entirely with another program.
+    \item When the program exits, the origin shell will no longer exist (in a script any commands after will never run).
+    \item Much like when a new process is ran in a shell, a command ran under \code{exec} inherits the environment of the origin shell.
+    \item The process ID stays the same.
+\end{itemize}
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{exec <command>}] Run a command with \code{exec}.
+    \item[\code{exec > <file\_path>}] Permanently redirect stdout to a file for the current shell.
+    \item[\code{exec 0< <file\_path>}] Permanently redirect stdin to a file for the current shell.
+\end{description}
+
+\subsection{Redirects and Streams}
+
+Shells have three basic I/O streams:
+
+\begin{itemize}
+    \item stdin which uses file descriptor 0.
+    \item stdout which uses file descriptor 1.
+    \item stderr which uses file descriptor 2.
+\end{itemize}
+
+There are also a number of operators indicated below which may be used to manipulate these streams.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|l|}
+        \hline
+        \textbf{Operator} & \textbf{Description} \\
+        \hline
+        \code{>} & Redirect stdout to a file, overwriting it \\
+        \code{>>} & Redirect stdout to a file, appending to it \\
+        \code{<} & Redirect stdin from a file \\
+        \code{2>} & Redirect stderr to a file, overwriting it \\
+        \code{2>>} & Redirect stderr to a file, appending to it \\
+        \code{\&>} & Redirect stderr and stdout to a file \\
+        \code{<<} & Here-document: redirect stdin from a block of text \\
+        \code{<<<} & Here-string: redirect stdin from a string \\
+        \code{|} & Pipe: redirect stdout of one command to stdin of another \\
+        \code{>\&} & Redirect output file descriptors \\
+        \code{>\&-} & Close a file descriptor \\
+        \code{<\&} & Redirect input file descriptors \\
+        \hline
+    \end{tabular}
+    \caption{Redirect (and similar) operators that can be used to manipulate streams}
+\end{table}
+
+\subsection{Here-Documents}
+
+\begin{itemize}
+    \item Here-documents allow you to feed a block of text into stdin of a command.
+    \item Requires an opening and closing delimiter (which must be on its own line).
+    \item Variable expansion is allowed in the here-document unless you quote the delimiter (e.g "DELIMITER", or 'DELIMITER').
+\end{itemize}
+
+Syntax, where \code{comm} is a command:
+
+\begin{lstlisting}
+comm << DELIMITER
+line 1
+line 2
+DELIMITER
+\end{lstlisting}
+
+\subsection{Here-Strings}
+
+\begin{itemize}
+    \item Similar to here-documents but allows you to feed a one-line string into stdin of a command.
+    \item Quotes are needed if the string has spaces.
+    \item Single quotes prevent variable expansion whereas double quotes allow it.
+    \item You can embed new lines into the string with \code{\textbackslash n}.
+\end{itemize}
+
+Syntax, where \code{comm} is a command:
+
+\begin{lstlisting}
+comm <<< "my here-string"
+\end{lstlisting}
+
+\subsection{Utility Commands}
+
+\subsubsection{Help Commands}
+
+\begin{description}
+    \item[\code{which}] Locate the path of a binary.
+    \item[\code{whatis}] Display the one-line man page description of a binary.
+    \item[\code{whereis}] Locate the path, source, and manual for a binary.
+    \item[\code{man <binary>}] Shows the manual page for a binary.
+    \item[\code{help <builtin>}] Shows help information for a shell built-in.
+    \item[\code{type -a <command>}] Shows all locations of an executable command and what it is (i.e binary or built-in).
+\end{description}
+
+\subsubsection{\code{history}}
+
+\begin{itemize}
+    \item Use the \code{history} command to view shell command history.
+    \item Bash has command history persisted in \url{~/.bash_history}.
+    \item The max number of entries in the file is according to the \code{\$HISTFILESIZE} environment variable.
+    \item An in-memory history list is also kept for each shell.
+    \item The max number of entries in the in-memory history is according to the \code{\$HISTSIZE} environment variable.
+    \item When a shell starts, the last \code{\$HISTSIZE} (e.g 1000) commands are loaded from the history file into memory.
+    \item Each time a command is ran in the shell session it is appended to the in-memory history list.
+    \item When the shell closes, any new items in the history are appended to the history file.
+\end{itemize}
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{history <n>}] Shows the last \code{n} commands from your in-memory history.
+    \item[\code{history !<n>}] Repeat command number \code{n} in your history.
+\end{description}
+
+\paragraph{Reverse Incremental Search}
+
+\begin{itemize}
+    \item \keys{\ctrl + r} can be used in the terminal to perform a reverse incremental search for a command or term in your history, finding the first match.
+    \item \keys{\ctrl + r} can be pressed again to find the next match.
+\end{itemize}
+
+\section{Files}
+
+\subsection{Permissions}
+
+\subsubsection{Overview}
+
+The three basic file permissions are read, write, and execute which are each applied to the user categories associated with the file: the owner, users in the file's assigned group, and all other users (usually lettered \code{u}, \code{g}, and \code{o}).
+
+Permissions are stored as a 16-bit integer in a file or directory's metadata where certain values in bit ranges or individual bits correspond to a certain permission or flag. The pattern in bits 12--15 indicate the file type (e.g regular file, directory, symlink, etc), bits 9--11 contain flags for special bits (setUID, setGID and the sticky bit), 6--8 contain the owner permissions, 3--5 the group permissions, and 0--2 the other user permissions.
+
+\subsubsection{Basic Permissions}
+
+The three basic permissions are read, write, and execute which are stored as 3 bits for each of the different user categories (usually letter \code{r}, \code{w}, and \code{x}).
+
+\paragraph{Read} Stored as the order 2 bit (contributes a value of 4 to a set of permission bits).
+
+\begin{itemize}
+    \item \textbf{For files}: Allows you to view the contents of a file (e.g \code{cat file.txt}).
+    \item \textbf{For directories}: Allows you to view the contents of a directory (e.g \code{ls -ld}).
+\end{itemize}
+
+\paragraph{Write} Stored as the order 1 bit (contributes a value of 2 to a set of permission bits).
+
+\begin{itemize}
+    \item \textbf{For files}: Allows you to modify the contents of a file (e.g \\\code{echo "modified" >> file.txt}).
+    \item \textbf{For directories}: Allows you to create, delete, or rename files in a directory (e.g \code{rm file.txt}). You also need execute permissions on the directory in order to write.
+\end{itemize}
+
+\paragraph{Execute} Stored as the order 0 bit (contributes a value of 1 to a set of permission bits).
+
+\begin{itemize}
+    \item \textbf{For files}: Allows you to execute the contents of the file as a \\program/script.
+    \item \textbf{For directories}: Allows you enter a directory and access files essentially acting as a gatekeeper to anything inside (e.g gatekeeps things actions like \code{cd dir} or \code{cat dir/file.txt}).
+\end{itemize}
+
+\subsubsection{SetUID Bit}
+
+\begin{itemize}
+    \item The setUID bit is a "permission" used on \textbf{files}.
+    \item It is set using the following command:
+    \begin{center}
+        \begin{lstlisting}
+        chmod u+s <filename>
+        \end{lstlisting}
+    \end{center}
+    \item When a file is executed that has the setUID bit is set, the EUID of the process is set to the file owner's UID and \textbf{not} the UID of the user executing the file.
+    \item This allows a user to execute the file and give the process the owner's permissions.
+\end{itemize}
+
+Display of the setUID bit in file permissions:
+
+\begin{description}
+    \item[\code{-rwSrw-r--}] Uppercase s means the file owner \emph{can't} execute but the setUID bit is set.
+    \item[\code{-rwsrw-r--}] Lowercase s means the file owner \emph{can} execute and the setUID bit is set.
+\end{description}
+
+\subsubsection{SetGID Bit}
+
+\begin{itemize}
+    \item The setGID bit is another "permission" used on \textbf{files and directories}.
+    \item It is set using the following command:
+    \begin{center}
+        \begin{lstlisting}
+            chmod g+s <file_or_dir>
+        \end{lstlisting}
+    \end{center}
+    \item For files:
+    \begin{itemize}
+        \item When the file is executed, the EGID of the process is set to the file's group's GID and \textbf{not} the primary group GID of the user executing the file.
+        \item This allows users to execute with the file's group's permissions.
+    \end{itemize}
+    \item For directories:
+    \begin{itemize}
+        \item Any new files or directories created \textbf{only} in that directory (1 level) will inherit the directory's group.
+    \end{itemize}
+\end{itemize}
+
+Display of the setGID bit in file permissions:
+
+\begin{description}
+    \item[\code{-rw-rwSr--}] Uppercase s means the file or directory group \emph{doesn't} have execute but the setGID bit is set.
+    \item[\code{-rw-rwsr--}] Lowercase s means the file or directory group \emph{does} have execute and the setGID bit is set.
+\end{description}
+
+\subsubsection{Sticky Bit}
+
+\begin{itemize}
+    \item The sticky bit is used on \textbf{directories}.
+    \item It is set using the following command:
+    \begin{center}
+        \begin{lstlisting}
+        chmod +t <directory>
+        \end{lstlisting}
+    \end{center}
+    \item In order to delete or rename files in a directory, you need write and execute permissions on the directory.
+    \item The sticky bit adds an extra restriction: \textbf{only the owner of the file or directory can delete or rename a file}.
+    \item This means users in the directory group and other users can't delete or rename files even if they have write and execute permissions.
+\end{itemize}
+
+Display of the sticky bit in file permissions:
+
+\begin{description}
+    \item[\code{-rw-rw-r-T}] Uppercase t means other users \emph{don't} have directory execute but the sticky bit is set.
+    \item[\code{-rw-rw-r-t}] Lowercase t means other users \emph{do} have directory execute and the sticky bit is set.
+\end{description}
+
+\subsubsection{Umask}
+
+\begin{itemize}
+    \item The umask is a per-process configuration that dictates what permissions new files and directories created by that process will have.
+    \item New files are \emph{usually never} created with executable permissions.
+    \item New directories are \emph{usually} created with executable permissions.
+    \item The umask is represented in octal, so the permission bits are masked (using bitwise AND) with the umask to remove the bits set in the umask.
+    \item Example, \code{umask 022}:
+    \begin{itemize}
+        \item Files usually don't start with execute bits so permissions start at \code{666}.
+        \item Then, the umask masks off \code{gx} and \code{ox} permission bits (set in the umask), leaving the permission bits as octal \code{644}.
+    \end{itemize}
+    \item \code{022} is a common umask, for my machine (Debian 13) it is \code{002}.
+    \item Umask is per-process so when a process starts it takes on the parent process umask (due to process forking but is usually the default).
+\end{itemize}
+
+\subsection{Archiving \& Compressing}
+
+\subsubsection{\code{tar}}
+
+The \code{tar} command is used to create and extract tar archives (tarballs).
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{tar -cvf <tar\_filename> <target>}] Create a tar archive.
+    \item[\code{tar -cvzf <targz\_filename> <target>}] Create a compressed tar archive using gzip compression.
+    \item[\code{tar -xvf <tar\_filename> -C <target>}] Extract a tar archive.
+    \item[\code{tar -xvzf <targz\_filename> -C <target>}] Extract a gzip-compressed tar \\archive.
+\end{description}
+
+\subsubsection{\code{zip}/\code{unzip}}
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{zip <zip\_filename> <file1> <file2> ...}] Zip 1 or more files.
+    \item[\code{zip -r <zip\_filename> <dir>}] Zip a directory.
+    \item[\code{unzip <zip\_filename>}] Extract all files a zip file into the current directory.
+    \item[\code{unzip <zip\_filename> -d <directory>}] Extract all files in a zip file into a directory (creating it if it doesn't exist).
+\end{description}
+
+\subsubsection{\code{gzip}/\code{gunzip}}
+
+The \code{gzip} command compresses a single file using gzip compression. For multiple files use \code{tar}.
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{gzip <filename>}] Gzip a file and delete the original.
+    \item[\code{gzip -k <filename>}] Gzip a file and keep the original.
+    \item[\code{gunzip <gz\_filename>}] Gunzip a file.
+\end{description}
+
+\subsection{Links}
+
+\subsubsection{Hard Links}
+
+\begin{itemize}
+    \item Each file on a file system has an inode that stores metadata and pointers to the file's data blocks.
+    \item A hard link is just another filename that points to the same inode.
+    \item The number after a file's permissions is the number of hard links in \code{ls -l} output.
+    \item You can check the inode number a file with \code{ls -i}.
+    \item Hard links cannot cross filesystems (including mounted filesystems).
+    \item Deleting a hard link does not delete a file.
+    \item A file is only deleted when the hard link count reaches 0.
+    \item Hard links share the same metadata and file content, the only thing that differs is the filename which is just a label.
+\end{itemize}
+
+\subsubsection{Soft Links}
+
+\begin{itemize}
+    \item A soft link (a.k.a a symlink) is a separate file that points to another file (its file path).
+    \item If the original file is deleted, the link becomes a "dangling link".
+    \item Directories can also be symlinked.
+    \item Soft links don't recieve their source's file content directly, rather the path is followed to the content when reading.
+    \item Soft links follow the path they point to so if the source path is relative, moving the symlink file may break it.
+    \item Soft links that point to absolute paths are more stable and can be moved around.
+\end{itemize}
+
+\subsubsection{\code{ln}}
+
+The \code{ln} command is used for creating hard and soft links. The source path can be relative or absolute. If relative, the source is relative to the location of the link file.
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{ln <source\_path> <link\_path>}] Create a hard link to the inode of the file at \code{<source\_path>} at \code{<destination\_path>}.
+    \item[\code{ln -s <source\_path> <destination\_path>}] Create a soft link to \\\code{<source\_path>} at \code{<destination\_path>}.
+\end{description}
+
+\section{Processes}
+
+\subsection{Permissions}
+
+Each process whens started has the following user and group ID fields attached to it that dictate its permissions:
+
+\begin{description}
+    \item[RUID (Real User ID)] Set to the ID of the user that started the process.
+    \item[EUID (Effective UID)] Set to whoever is given effective control of the process (usually UID but this may change with the setUID bit set on an executable file or at will by the process)
+    \item[Saved Set-UID] Set to whatever the initial EUID was. This is done in order for the process to remember what the EUID initially was so it can modify the EUID at will and reinstate the initial if necessary.
+    \item[RGID (Real Group ID)] RUID but set to the group ID of the user's primary group.
+    \item[EGID (Effective GID)] EUID but set to a group ID and can change based on the setGID bit.
+    \item[Saved Set-GID] The group ID equivalent of the saved set-UID.
+\end{description}
+
+\subsection{Process Forking}
+
+\begin{itemize}
+    \item Processes are almost always created by a parent process.
+    \item The parent process calls the \code{fork()} system call, creating a near-exact copy of the parent process.
+    \item When the copy is made, the child process usually calls the \code{exec()} system call which replaces the child's program with a new program intended to run.
+    \item The very first process created after your system boots is called init and is usually systemd in modern distros.
+    \item Process forking means that every process corresponds to a node in a process tree (can be seen with \code{pstree}) with init being the root node.
+\end{itemize}
+
+\subsection{Process States}
+
+Processes can be in one of the following states:
+
+\begin{description}
+    \item[Running (R)] The process is actively executing its program or waiting in the run queue.
+    \item[Sleeping (S)] The process is waiting for an event (e.g user input, a file read).
+    \item[Stopped (T)] The process has been paused (usually by a signal like \keys{\ctrl + z}).
+    \item[Zombie (Z)] The process has finished but its parent hasn't acknowledged this yet.
+\end{description}
+
+\subsection{Signals}
+
+% todo
+
+\section{Users}
+
+\subsection{Switching to a User}
+
+\subsubsection{\code{su}}
+
+\begin{itemize}
+    \item Used to give a full login shell as another user.
+    \item Requires the user's password.
+    \item You can also run individual commands as another user using \code{su}.
+    \item \code{su} requires the \emph{target user's} password so \code{sudo} might be preferred for automation tasks.
+\end{itemize}
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{su - <user>}] Run an interactive login shell for \code{<user>} (or \code{root} if left blank).
+\end{description}
+
+\subsubsection{\code{sudo}}
+
+\begin{itemize}
+    \item A login shell can be granted with \code{sudo} as with \code{su}.
+    \item Can also be used to run individual commands as another user.
+    \item \code{sudo} requires \emph{your} password.
+    \item On a Linux system, the \code{root} user has the highest privileges.
+    \item Users can be added to the \code{sudo} group to mark them as a \emph{superuser} which lets you run commands with administrator privileges.
+\end{itemize}
+
+\paragraph{Quick Usage}
+
+\begin{description}
+    \item[\code{sudo -u <user> <command>}] Run \code{<command>} as \code{<user>} (\code{root} it user not specified).
+    \item[\code{sudo -u <user> -i}] Run an interactive login shell for \code{<user>} (\code{root} if left blank).
+\end{description}
+
+\subsection{User Management}
+
+\subsubsection{Delegating a Superuser}
+
+\begin{description}
+    \item[\code{sudo usermodo -aG sudo <username>}] Creates a superuser by adding them to the \code{sudo} group.
+    \item[\code{sudo deluser <username> sudo}] Removes a superuser by removing them from the \code{sudo} group.
+\end{description}
+
+\section{Text Editing \& Processing}
+
+\subsection{Vim}
+
+\subsubsection{\code{netrw}}
+
+\code{netrw} is the built-in file explorer in Vim. See below the common \code{netrw} keybinds:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|l|}
+        \hline
+        \textbf{Keybind} & \textbf{What it Does} \\ \hline
+        \keys{\%} & Create a new file \\
+        \keys{d} & Create a new directory \\
+        \keys{-} & Go up one directory \\
+        \keys{u} & Return to the previous directory \\
+        \keys{r} & Refresh the directory listing \\
+        \keys{\shift + r} & Rename a file \\
+        \keys{\shift + d} & Delete a file \\
+        \keys{leader + e} & Open \code{netrw}. \\
+        \keys{leader + q} & Close \code{netrw}. \\ \hline
+    \end{tabular}
+    \caption{Common keybinds in \code{netrw}}
+\end{table}
+
+\subsubsection{Switching Modes}
+
+\paragraph{Keybinds} See below the common keybinds for switching modes in Vim:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline
+        \textbf{Keybind} & \textbf{What it Does} \\ \hline
+        \keys{j + j} & Switch from insert to normal mode \\
+        \keys{v} & Switch from insert to visual mode \\
+        \keys{leader + leader} & Switch from visual to normal mode \\
+        \keys{\shift + v} & Select a line in visual mode \\
+        \keys{\ctrl + v} & Enter visual mode and select a rectangular block of text \\
+        \keys{a} & Enter insert mode and start inserting \emph{after} the caret \\
+        \keys{i} & Enter insert mode and start inserting \emph{before} the caret \\
+        \keys{\shift + a} & Enter insert mode and start inserting at the \emph{end} of the line \\
+        \keys{\shift + i} & Enter insert mode and start inserting at the \emph{start} of a line \\
+        \keys{o} & Open a new line \emph{below} the current and enter insert mode \\
+        \keys{\shift + o} & Open a new line \emph{above} the current and enter insert mode \\ \hline
+    \end{tabular}
+    \caption{Common keybinds used for switching modes in Vim}
+\end{table}
+
+\subsubsection{Navigation}
+
+\paragraph{Keybinds} See below the common navigation keybinds:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline \textbf{Keybind} & \textbf{What it Does} \\ \hline
+        \keys{h} & Move left \\
+        \keys{j} & Move down \\
+        \keys{k} & Move up \\
+        \keys{l} & Move right \\
+        \keys{0} & Go to the \emph{first character} of the line \\
+        \keys{\$}  & Go to the \emph{last character} of the line \\
+        \keys{\textasciicircum} & Go to the \emph{first non-blank character} of the line \\
+        \keys{g + g} & Go to the \emph{first line} of the file \\
+        \keys{\shift + g} & Go to the \emph{last line} of the file \\
+        \keys{w} & Go to the start of the next word \\
+        \keys{b} & Go to the start of the previous word \\
+        \keys{e} & Go to the end of the next word \\
+        \keys{f + <char>} & Find the next occurence of \code{<char>} and jump \\
+        \keys{\shift + f + <char>} & Find the previous occurence of \code{<char>} and jump \\
+        \keys{;} & Repeat the last \keys{f}-based keybind \\
+        \keys{,} & Repeat the last \keys{f}-based keybind in the reverse direction \\
+        \keys{\%} & Go to the matching bracket of the current \\
+        \keys{\shift + m} & Go to the line in the middle of the screen \\
+        \keys{\shift + h} & Go to the line at the top of the screen \\
+        \keys{\shift + l} & Go to the line at the bottom of the screen \\
+        \hline
+    \end{tabular}
+    \caption{Common keybinds used for navigation in Vim}
+\end{table}
+
+\paragraph{Commands} See below the common navigation commands:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline \textbf{Command} & \textbf{What it Does} \\ \hline
+        \code{:<number>} & Move to the line numbered \code{<number>} \\
+        \code{:\$} & Move to the last line in the file \\
+        \code{:-<number>} & Move \code{<number>} lines \emph{up} \\
+        \code{:+<number>} & Move \code{<number>} lines \emph{down} \\
+        \hline
+    \end{tabular}
+    \caption{Common commands used for navigation in Vim}
+\end{table}
+
+\subsubsection{Insertion \& Deletion}
+
+\paragraph{Keybinds} See below the common keybinds used for inserting and deleting content in Vim:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline \textbf{Keybind} & \textbf{What it Does} \\ \hline
+        \keys{d + w} & Cut a word starting at the caret \\
+        \keys{d + d} & Delete a line \\
+        \keys{u} & Undo the last action \\
+        \keys{\ctrl + r} & Redo the last action \\
+        \keys{p} & Paste the last cut item (e.g line or character) after the caret or after the current line \\
+        \keys{\shift + p} & Past the last cut item before the caret or before the current line \\
+        \keys{y + w} & Copy a word \\
+        \keys{y + y} & Copy a line \\
+        \keys{d + i + w} & Cut the current word \\
+        \keys{y + i + w} & Copy the current word \\
+        \hline
+    \end{tabular}
+    \caption{Common keybinds used for inserting and deleting content in Vim}
+\end{table}
+
+\subsubsection{Searching}
+
+\paragraph{Keybinds} See below the common keybinds used for searching in Vim:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline \textbf{Keybind} & \textbf{What it Does} \\ \hline
+        \keys{n} & Go to the next match \\
+        \keys{\shift + n} & Go to the previous match \\
+        \hline
+    \end{tabular}
+    \caption{Common keybinds used for searching in Vim}
+\end{table}
+
+\paragraph{Commands} See below the common commands used for searching in Vim:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline \textbf{Command} & \textbf{What it Does} \\ \hline
+        \code{/} & Open a search query \\
+        \code{?} & Open a search query in the reverse direction \\
+        \hline
+    \end{tabular}
+    \caption{Common commands used for searching in Vim}
+\end{table}
+
+\subsubsection{Useful Keybinds}
+
+See below other useful keybinds in Vim:
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{7cm}|}
+        \hline \textbf{Keybind} & \textbf{What it Does} \\ \hline
+        \keys{z + z} & Scroll the current line to the middle of the screen \\
+        \keys{.} & Repeat the last change made in normal mode \\
+        \keys{\shift + z + z} & Save and quit vim \\
+        \hline
+    \end{tabular}
+    \caption{Common commands used for searching in Vim}
+\end{table}
+
+
+\end{document}

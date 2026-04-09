@@ -8,6 +8,14 @@
 \usepackage{tablefootnote}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage[expansion=false]{microtype}
+\usepackage{hyperref}
+
+\hypersetup{
+    hidelinks
+}
+
+\DisableLigatures[>,<]{encoding = T1, family = tt* }
 
 \lstset{
     language=C,
@@ -240,6 +248,7 @@ const int d = 20; // will not be changed
         15 & Comma & \code{,} & LTR \\
         \hline
     \end{tabular}
+    \caption{Operator precedence in C}
 \end{table}
 
 \paragraph{Arithmetic Operators}
