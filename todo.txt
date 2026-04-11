@@ -8,6 +8,5 @@ low-level:
     * Finish C book
 
 linux:
-    * Convert markdown to LaTeX
     * Follow Linux roadmap
     
