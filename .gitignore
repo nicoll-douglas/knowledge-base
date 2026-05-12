@@ -1,4 +1,8 @@
 *.swp
-*.python-version
 test
 *.synctex.gz
+*.glg
+*.glo
+*.gls
+*.ist
+*.book.pdf
