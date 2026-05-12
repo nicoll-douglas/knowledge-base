@@ -692,7 +692,7 @@
     \item Pipelining is used to avoid poor performance of stop-and-wait protocols and improve the utilization of the sender.
     \item The sender can start sending any data it has whilst some of it is already in transit instead of waiting.
     \item Pipelining allows the sender to send multiple packets without waiting for acknowledgements.
-    \item The introduction of pipelining has the following consequences (in comparison with the protocol developed in [rdt](./rdt)):
+    \item The introduction of pipelining has the following consequences:
     \begin{itemize}
         \item The range of sequence numbers must be increased since each in-transit packet must have a unique sequence number.
         \item The sender and receiver sides may have to buffer more than one packet (at minimum the sender has to buffer packets that have not yet been ack'd).
