@@ -8,6 +8,15 @@
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
 
+\newcommand{\fig}[4]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=#2\textwidth]{#1}
+        \caption{#3}
+        \label{fig:#4}
+    \end{figure}
+}
+
 \usepackage{xcolor}
 \definecolor{linkColor}{RGB}{0, 102, 204}
 
@@ -25,11 +34,11 @@
 \maketitle
 \tableofcontents
 
-\section{Electronics Theory}
+\section{The Physics of Electricity}
 
 \subsection{Electric Force}
 
-\subsubsection{What is Charge?}
+\subsubsection{Charge}
 
 Charge is a fundamental property of matter that causes it to experience a force when placed in an electric or magnetic field (electromagnetic field). Protons carry a positive charge, electrons carry a negative charge, neutrons carry no charge. Opposite charges will pull each other together, like charges will push away from each other.
 
@@ -41,11 +50,11 @@ Simple, singular, stationary protons and electrons have an electric field. A pro
     \caption{The electric fields of a single, stationary proton and electron}
 \end{figure}
 
-\subsubsection{What is an Electric Field?}
+\subsubsection{Electric Fields}
 
 An electric field is an invisible area of influence surrounding an electrically charged object such as a proton or electron. The direction of an electric field is the direction a positive charge would be pushed.
 
-When a proton is put nearby an electron (i.e \emph{placed in its electric field}), the electric fields overlap to create a singular electric field. They will \emph{naturally} pull towards each other (a consequence of charge). The opposite occurs when two particles of the same charge are put next to each other meaning they will push away from each other. This pushing/pulling is known as the \textbf{electrostatic force} when the particles are standing still and more broadly as the \textbf{electric} force since the charges or stationary or moving. The push Each particle experiences a force that is exerted upon it by the other, but the force itself is enabled by the interaction of both electric fields. Two particles of opposite charge will each exert an electrostatic \emph{pull} force on the other. Two particles of the same charge will exert a \emph{push} force on each other. The force exerted is equal on both particles (Newton's Third Law).
+When a proton is put nearby an electron (i.e \emph{placed in its electric field}), the electric fields overlap to create a singular electric field. They will \emph{naturally} pull towards each other (a consequence of charge). The opposite occurs when two particles of the same charge are put next to each other meaning they will push away from each other. This pushing/pulling is known as the \textbf{electrostatic force} when the particles are standing still and more broadly as the \textbf{electric} force since the charges can be stationary or moving. Each particle experiences a force that is exerted upon it by the other, but the force itself is enabled by the interaction of both electric fields. Two particles of opposite charge will each exert an electrostatic \emph{pull} force on the other. Two particles of the same charge will exert a \emph{push} force on each other. The force exerted is equal on both particles (Newton's Third Law).
 
 \begin{figure}[H]
     \centering
@@ -80,21 +89,21 @@ The force is directly proportional to the the product of the charges. It is also
 
 \subsubsection{What is a Coulomb?}
 
-A Coulomb (C) is the standard unit used to measure the quantity of electric charge. 1 Coulomb is defined as the total charge of approximately 6.242 quintillion electrons (making the actual total charge negative).
+A Coulomb (C) is the standard unit used to measure the quantity of electric charge. 1 Coulomb is defined as the total charge of approximately 6.242 quintillion electrons.
 
 $$1 \; \mathrm{C} \approx 6.242 \times 10^{18} \; \mathrm{electrons}$$
 
+Think of 1 Coulomb as the charge of a sufficiently large packet of electrons for the rest of this document.
+
 \subsection{Electricity}
 
-\subsubsection{Electrical Current}
+\subsubsection{Current}
 
 \begin{itemize}
     \item Electric current is the total charge that passes through some cross-sectional area per unit time i.e the flow rate of electric charge.
     \item This area is usually a slice through a solid material such as a conductor.
     \item The unit to measure current is Coulombs per second also known as Ampere or \emph{amp} ($1 \; \mathrm{A} = 1 \; \mathrm{C/s}$).
 \end{itemize}
-
-\paragraph{Negative Current?}
 
 \subsubsection{Conductors}
 
@@ -123,10 +132,9 @@ Voltage is defined as the eletrical potential difference \emph{between two point
 
 Figure \ref{fig:voltage} shows a scenario where voltage exists (between two points). It illustrates a charge imbalance where on the left-hand side of some physical medium there is a high electron concentration and on the right-hand side a low concentration. In the middle there may be something separating them (such as an insulator or an open switch). Due to the high pressure on the left-hand side, there is some arbitrary amount of work that could be done if those electrons were allowed to move to the right hand-side. This is what defines \textbf{potential difference} or \textbf{voltage} and what is measured by voltage. In the event that the electrons were allowed to move, the work done would be a current produced for a brief amount of time across the medium.
 
-If the separator was removed and replaced by a conductive path, the electrons would flow left-to-right until the concentration equalised on both sides, producing an equilibrium in the medium. In this event the "pressure" would be gone and the voltage would drop to \textbf{0V}. The electrons would flow due to the strong electric push force from other electrons behind them. When the equilibrium is reached, all electrons are repelling each other with a similar force and so the net force is zero.
+If the separator was removed and replaced by a conductive path, the electrons would flow left-to-right until the concentration equalised on both sides, producing an equilibrium in the medium. In this event the "pressure" would be gone and the voltage would drop to \textbf{0V}. The electrons would flow due to the strong electric push force from other electrons behind them. When the equilibrium is reached, all electrons are repelling each other with a similar force and so the net force is zero and there is no more work that can be done.
 
-\subsubsection{A Basic Circuit}
-
+\paragraph{A Basic Circuit}
 
 \begin{figure}[H]
     \centering
@@ -143,6 +151,205 @@ Consider the circuit in figure \ref{fig:basic_circuit}. The circuit has:
     \item Two copper wire conductors (allowing electrons to flow freely amongst them).
 \end{itemize}
 
-The battery contains voltage when you compare its positive and negative terminals. A chemical reaction in the battery pumps out electrons from the negative terminal whilst "sucking in" electrons at the positive terminal at the same rate. This builds up the same voltage at the switch as the copper wire between the negative terminal and the switch contains a high concentration of electrons output by the battery. When the circuit is closed, a current is produced and electrons flow around the circuit. The voltage at the battery's negative terminal is continuously 9V and so electrons continuously get pumped out to maintain the current. As a sidenote, the number of electrons flowing through the circuit stays the same.
+The battery contains voltage when you compare its positive and negative terminals. A chemical reaction in the battery pumps out electrons from the negative terminal whilst "sucking in" electrons at the positive terminal at the same rate (current). This builds up the same voltage at the switch as the copper wire between the negative terminal and the switch contains a high concentration of electrons output by the battery. When the circuit is closed, a current is produced and electrons flow around the circuit. The voltage at the battery's negative terminal is continuously 9V and so electrons continuously get pumped out to maintain the current. This continuous 9-volt voltage is an example of a direct current (DC) where the electrons flow in one direction only in a steady, constant stream.
+
+
+\paragraph{Mathematical Definition}
+
+Mathemtically, voltage is defined as the work done per unit of charge, expressed by the formula below:
+
+$$V = \frac{W}{Q}$$
+
+\begin{itemize}
+    \item $V$ is the voltage in volts.
+    \item $W$ is energy/work done in joules.
+    \item $Q$ is the charge in Coulombs.
+\end{itemize}
+
+By definition, one volt is equal to 1 Joule of energy per Coulomb of charge. If a 9-volt battery is connected to a circuit, it means that every \emph{packet} of charge leaving the battery is carrying 9 Joules of energy.
+
+\subparagraph{What is Work, Energy, and Joules?}
+
+Energy is the capacity for an object to do work. "Work done" occurs when a force acts upon an object to cause a displacement. If you push a wall and it doesn't move, you've done zero work. The Joule is the standard unit to measure energy and work. One Joule is defined as the amount of work done when a force of 1 Newton moves an object a distance of 1 meter in the direction of force. The relationship between work in Joules ($W$), force in Newtons ($F$) and displacement in the direction of force in meters ($d$) is calculated with the following formula:
+
+$$W = F \cdot d$$
+
+In figure \ref{fig:voltage}, the pressure on the left-hand side due to the electrons being tightly packed together means there is a large amount of force being exerted on the electrons from the electric field. When the separator is removed, the electrons will travel some distance as a result of that force and work will be done. That pressure and potential is what we defined as voltage.
+
+\subsubsection{Resistance}
+
+Resistance is the measure of how much a material opposes the passage of an electric current. It is measured in Ohms ($\Omega$). When voltage pushes electrons through a conductor or physical medium, they don't fly in a perfectly straight line; they constantly collide with the atoms in the medium. Each collision slows down the flow of electrons (reducing the current) and converts some of the electrical energy of the charge into heat (which is why something like a laptop gets warm).
+
+Four main physical factors determine resistance:
+
+\begin{itemize}
+    \item \textbf{Material}: Some materials hold onto their electrons tightly while others have loose electrons that move easily and can become delocalised.
+    \item \textbf{Length}: A longer wire has more atoms for the electrons to bump into. If a material is long then a charge will have had many more collisions by the time it traverses the material than if it was short regardless of the current, leading to more energy loss.
+    \item \textbf{Cross-Sectional Area / Thickness}: A thick wire makes it easier for more electrons to flow through than a narrow wire. If you have a given current for a thick wire, in a thin wire the speed of the electrons must be increased and thus the voltage increased for the current to be the same as in the thick wire (having the same number of electrons pass through in a given amount of time). As an example, if an electron collides at a higher speed in a thin wire it will lose more energy than if it was in the thick wire, impacting resistance.
+    \item \textbf{Temperature}: In most conductors, as the material gets hotter, the atoms vibrate more violently making it harder for electrons to squeeze through without colliding.
+\end{itemize}
+
+Resistance takes into consideration the whole material. When you are measuring the resistance you are measuring how much a material of certain thickness and length (at a certain temperature) resists the given current end-to-end. \textbf{Resistivity} takes into consideration only the intrinsic properties of the material i.e the material itself and the temperature. Resistivity tells you the \emph{likelihood} of a collision per unit of volume whereas resistance tells you the \emph{difficulty} of the journey. One is intrinsic and concrete, the other is extrinsic and measured practically.
+
+\paragraph{Resistance Represented Numerically}
+
+Before Ohm (a physicist), scientists knew that some materials conducted electricity better than others, but they didn't have a mathematical way to quantify how much better. Ohm used a setup involving a thermocouple (to provide a very steady voltage) and different lengths and thicknesses of wires. He measured the loss of current as it passed through these wires. 
+
+He discovered that for any specific wire at a constant temperature, the ratio of the voltage to the current was always the same. Meaning their relationship could be modelled with the following formula:
+
+$$V = I \cdot k$$
+
+Where $V$ is the voltage in volts, $I$ is the current in amps and $k$ is some real constant.
+
+He realized this constant wasn't just a random number; it was a physical property of the object he was testing. If he used a longer wire, the constant got larger. If he used a thicker wire, the constant got smaller. He concluded that this value represented the "resistance" of that specific object to the flow of electricity.
+
+Resistance is measured in "Ohms" where 1 Ohm is the resistance of a conductor such that a constant current of 1 amp produces a voltage drop of 1 volt. This conductor could be of a certain material, at a certain temperature, of a certain length, and thickness but as long as the condition holds, that specific conductor object has a resistance of 1 Ohm.
+
+\subsubsection{Ohm's Law}
+
+The formula idenfitied in the last section is what we now know as Ohm's law which relates the three important pillars of electricity: voltage, current and resistance. The formula is as follows:
+
+$$V = I \cdot R$$
+
+Where $R$ is the resistance.
+
+\paragraph{Voltage Drop}
+
+A \emph{voltage drop} is the reduction in electrical potential as current flows through some medium (e.g a resistor, lightbulb or a wire). It is the energy spent to get past an obstacle. When electrons travel through a medium with resistance, they collide with atoms, converting some of their electrical potential energy into heat or light. This means they lose some of their potential energy, leading to a voltage drop between two points that we can call a snapshot. This means that if we were to look at the next snapshot of the electrons's journey between two points, the work that could be done between those two points and beyond is less than what could've been done in the last snapshot and beyond. 
+
+In summary: for a unit of charge (a packet), when voltage drops, some work was performed meaning some distance was moved and "spent". The total amount of work that can be done is now lower and so is the total amount of distance that can be moved.
+
+The amount of voltage dropped depends on the current and resistance which can be calculated by Ohm's law. If you have a larger current ($I$), more collisions occur leading to a bigger voltage drop. If resistance is higher ($R$), it's hard to pass through also leading to a bigger drop.
+
+\subsubsection{AC vs DC}
+
+Current is most often found in two types, \textbf{Alternating Current (AC)} and \textbf{Direct Current (DC)}. In a DC circuit, the electrons flow in one direction only in a steady, constant stream. The voltage is constant over time. In an AC circuit, electrons move back and forth and voltage follows a sine wave pattern.
+
+Electronic circuits use DC circuits because digital logic requires a predictable and steady flow of electricity (e.g for transistors).
+
+\subsubsection{Insulators}
+
+An insulator is a material that refuses to let electricity pass \\through it. It is the opposite of a conductor which is discussed earlier. In these materials, electrons are tightly bound to their atoms and cannot move freely. Their primary function is to block current entirely and provide safety, and they have an extremely large amount of resistance. Some examples include rubber, glass, plastic, ceramic, and dry wood. The plastic coating around electrical cables are insulators that keep the electricity inside the wire.
+
+If you applied an astronomically high voltage to an insulator it would eventually reach its limit and conduct electricity. When this happens the insulator usually gets permanent structural damage. Materials like plastic, glass, or ceramic will usually crack, melt, or carbonize (turn to carbon), leaving a permanent conductive "burnt" path through the material.
+
+\subsection{Understanding Semiconductors}
+
+\subsubsection{Energy Band Theory}
+
+To understand conductivity and semiconductors you have to understand Energy Band Theory. Electrons in a solid exist in two main bands:
+
+\begin{enumerate}
+    \item \textbf{Valence Band}: The highest range of energy levels that are normally occupied by electrons at absolute zero temperature. Simply put, these can be thought of as the outermost shell(s) of the atom. In the valence band, the electrons have enough energy to be part of the outer shell(s) but not enough to break free and move through the material.
+    \item \textbf{Conduction Band}: The lowest possible range of electron energy levels that allow for electrons to delocalise and create a current. This range of energy levels is usually higher than that of the valence band.
+\end{enumerate}
+
+In order for an electron to cross over in terms of energy from the valence band to the conduction band, it has to overcome the \textbf{energy gap}. This is a range of energy levels between the valence band and conduction band that an electron cannot physically possess. The larger the gap, the higher the range of energy levels that comprise the conduction band (or conversely lower for the valence band), the more work that needs to be done to get the electron to move into the conduction band and start roaming freely. If the energy gap is large, an electron in the valence band won't easily "budge". If the energy gap is small, 0, or even negative (the valence band overlaps the conduction band), then an electron can be budged more easily. The energy gap can be thought of as the price to pay in order to get an electron to "jump" from the valence band to the conduction band. 
+
+The energy gap directly determines how conductive a material may be. A smaller energy gap implies easier conductivity (a conductor), a larger energy gap implies poorer or no conductivity (an insulator).
+
+\subsubsection{Energy}
+
+One of confusing things about energy is that it is measured in Joules which is the same measurement unit used for work done. However work done implies an object was moved over some distance over a certain time, but energy is often described as some kind of innate static property of an object. You can think of the energy of a stationary object as \emph{how much potential it has to do work}. This is what defines "potential energy". Consider the example in figure \ref{fig:energy_explained}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{energy_explained.png}
+    \caption{Energy expressed as low potential to do work}
+    \label{fig:energy_explained}
+\end{figure}
+
+The electron is under a high electrostatic pull force $F$ from the nucleus of its parent atom. We can apply a very small force $d$, much smaller than $F$, to see whether the electron budges and if work is done. Since $F$ is too strong and holding the electron in place, it doesn't budge and no work is done. We can try again with another force of strength $2d \; \mathrm{N}$ but it still doesn't budge. We can keep trying to budge the electron by applying lots of individual small forces like this and increasing them in strength, but we would have to exert a force of strength $> F$ for it to budge and work to be done. We can describe the electron as having a low potential for work to be done which is what describes energy.
+
+In conductors, these bands overlap and electrons move freely. In insulators the "band gap" between them is too wide for electrons to jump across. In semiconductors, the gap is small and so if you give electrons a little "nudge" (say, via voltage), they can jump into the conduction band.
+
+\subsubsection{Conductors: Copper}
+
+A copper atom has one valence electron which is held on very weakly by its nucleus. The nucleus exerts an electrostatic pull force on it but the electrons of the inner shell also exert a push force on it that is almost equal. However there is still a small force that keeps the electron with the parent atom. This is illustrated in figure \ref{fig:copper_valence_electron}.
+
+\fig{copper_valence_electron.png}{0.7}{The forces acting on the valence electron of a copper atom.}{copper_valence_electron}
+
+Since the resultant force on the valence electron is incredibly weak, it is said to be in a high energy state as any small external force can overcome the pull force and easily displace it. It has high potential energy. For copper atoms, the energy level of the valence electron lies within the valence band.
+
+\paragraph{Copper Solid}
+
+Now imagine the following scenario, illustrated in figure \ref{fig:copper_delocalisation}:
+
+Time is frozen and you have two neighbouring copper atoms within a solid. As a result, their valence shells overlap. The valence electron of the left atom lies within this overlap, in its valence shell, but in such a way that the pull force of each nucleus exerted on it is at an angle. Since the electron is in the overlap, it is physically closer to the neighbouring nucleus than its parent atom's. This means that the pull force of the neighbour would be larger than that of the parent. If we were to start time, the electron would likely experience some non-zero resultant force, causing it to start moving and travel along some arbitary path as it keeps feeling the influence of forces within the solid. As illustrated in figure \ref{fig:copper_delocalisation}, the electron could potentially travel along a path something like the green arrows where the electron is continuously pulled in and "pinballed" by the pulls of other nuclei and repulsions of inner electrons respectively.
+
+\fig{copper_delocalisation.png}{1}{Scenario where we can visualise the delocalisation of a copper atom's valence electron}{copper_delocalisation}
+
+This is a basic scenario illustrating how the high potential energy of valence electrons can cause them to become delocalised and roam throughout the solid. In practice, the solid may be at some temperature, causing the atoms to vibrate and further bounce around the electrons (with a current, this also influences resistance). Delocalised electrons can also bump into each other and cause repulsion.
+
+Another important thing to understand is that the outer shell of a copper electron consists of 4 subshells (imagine shells as highways spread apart and subshells as the lanes in each highway). The subshell that the valence electron lives in (called the $4s$ subshell) is able to hold up to 2 electrons. However since there is only a single electron, when shells overlap there is this "extra room" for electrons to potentially move into which also contributes to the ease of delocalisation. Thinking in 3D, in a copper solid an atom has \textbf{many} neighbours. The subshells overlap and create a vast 3D volume of possible space throughout the solid where delocalised electrons can move into.
+
+\subparagraph{Where Energy Bands Come In}
+
+The range of energy levels that comprises the valence band of copper actually overlaps with the range of energy levels that comprise the conduction band, which is illustrated in figure \ref{fig:copper_energy_bands}. The valence electron has enough energy to be part of the outer shell \emph{and} enough to easily become delocalised simultaneously. The amount of force to delocalise it is effectively 0 since its potential energy is so high. This is what makes copper one of the best conductive materials.
+
+\fig{copper_energy_bands.png}{0.8}{The energy band layout for copper}{copper_energy_bands}
+
+\subsubsection{Insulators: Diamond}
+
+Diamonds are comprised of carbon atoms. A carbon atom has 6 electrons, 2 in the first shell and 4 in the second shell. The second shell can hold up to 8 atoms. In diamond, a carbon atom has covalent bonds with 4 other neighbouring carbon atoms, sharing an electron from its outer shell with each of its neighbours as illustrated in \ref{fig:diamond}. This completely fills up the outer shells of all the atoms.
+
+\fig{diamond.png}{0.7}{Illustration of the strong bonds formed in diamond by carbon atoms.}{diamond}
+
+The covalent bonds in diamond are incredibly strong as well as the attractive force between the atoms's nuclei and the negative charge of each bond, putting the valence electrons in the bond into a very low energy state. This means that an incredibly large amount of work needs to be done in order to break those bonds and free the electrons, namely, them having enough energy to be within the conduction band. This is also made difficult by the fact that each outer shell is full meaning there is no "extra room" for electrons to move into if they were to delocalise compared to a material like copper. The precise amount of work necessary directly corresponds to a large energy gap between the valence and conduction bands in diamond. This is illustrated in figure \ref{fig:diamond_energy_band}. This large energy gap is what makes diamond one of the best insulators.
+
+\fig{diamond_energy_band.png}{1}{The energy bands in diamond}{diamond_energy_band}
+
+\subsubsection{Semiconductors: Silicon}
+
+Silicon atoms and a silicon lattice follow a similar structure to carbon and diamond respectively. Silicon has 4 valence electrons, with the valence shell holding up to a potential 8. Atoms in a silicon lattice have 4 neighbours and share 1 valence electron with each of their neighbours, producing covalent bonds. However, since silicon atoms are larger than carbon, the bonds are slightly longer and weaker. This results in a much smaller energy gap.
+
+At absolute zero, the valence band is completely full for silicon (as well as diamond). The conduction band is, conversely, completely empty. For diamond at room temperature, the electrons in the valence band gain some thermal energy but nowhere near enough to jump to the conduction band. For silicon, since the energy gap is much smaller, at room temperature a small but significant number of electrons gain enough thermal energy to jump the gap. This then allows silicon to conduct electricity. However, unlike conductors like copper, semiconductors do something a bit weird. They create two electricity "carriers", one comprised of negatively charged electrons and one comprised of positively charged holes. This is illustrated in figure \ref{fig:silicon_hole_current}.
+
+\fig{silicon_hole_current.jpg}{1}{How hole current is produced within a silicon solid}{silicon_hole_current}
+
+\subsubsection{Doping}
+
+Semiconductor doping involves introducing atoms of a different element into a semiconductor solid that contain a surplus or deficit of electrons. This makes the material more conductive as well as this conductivity controllable.
+
+Doping comes in two main types:
+
+\begin{enumerate}
+    \item \textbf{N-Type Doping}: To create N-type silicon, we introduce an element with 5 valence electrons such as Phosphorus or Arsenic. These atoms will form 4 covalent bonds with each of its neigbours like regular silicon, however the fifth becomes a free electron that can easily move through the material.
+    \item \textbf{P-Type Doping}: To create P-type silicon, we introduce an element with 3 valence electrons such Boron or Gallium. These atoms will form 3 covalent bonds with each of its neighbours and one incomplete bond. This creates a \emph{hole}.
+\end{enumerate}
+
+The ratio of dopant atoms to silicon atoms is roughly $1 : 10^6$ to $1 : 10^9$ (typical doping for semiconductor devices). This seems small but the concentration is roughly $10^{13}$ to $10^{16}$ dopant atoms per cubic centimeter. These tiny impurities vastly improve the material's conductivity.
+
+\subsubsection{Diodes}
+
+A diode is essentially a one-way valve for electrical current. It allows electricity to flow through it easily in one direction, but blocks it completely from flowing backward. This is done by taking a piece of P-type silicon and a piece of N-type silicion and placing them directly against each other, creating a \textbf{P-N Junction}.
+
+\paragraph{Diodes at Rest}
+
+When you create a P-N junction, a natural phenomenon occurs at the boundary line. Since the N-side has a high concentration of free electrons and the P-side has a high concentration of holes, the free electrons right near the boundary rush across to fill the nearest holes on the other side. However, this doesn't continue forever. When an N-type atom loses its electron, it becomes a positively charged ion. When a P-type atom gains that electron, it becomes a negatively charged ion. Near the border, a barrier of these fixed ions forms. This border zone is called the \textbf{Depletion Region}. As these ions form, their charges add up to form an electric field. Eventually this field becomes strong enough to stop any more electrons from crossing over, at which point the system has reached equilibrium. In this state no current is produced and the depletion region acts as a "dry sea" with no free carriers and no more electrons able to cross over. This outcome is illustrated in figure \ref{fig:depletion_region}.
+
+\fig{depletion_region.png}{0.9}{The depletion region of a diode at rest}{depletion_region}
+
+\paragraph{Diodes With Current: Forward Bias}
+
+To get current to flow easily, you connect the positive terminal of a battery to the P-side of a diode and the negative terminal to the N-side. This is called \textbf{Forward Bias}. The positive terminal repels the positive holes in the P-side towards the center of the diode meanwhile the negative terminal repels the free electrons in the N-side towards the center as well. This makes them physically closer and increases their attractive force. This pushing action squishes the depletion region, with the forces acting on free electrons now being sufficient to make them cross over where they once couldn't due to the depletion region. At a certain voltage the depletion region collapses entirely and charge carriers flood across the junction, producing current. The amount of voltage required for this in a standard Silicon diode is about 0.7V. This process is illustrated in figure \ref{fig:forward_bias}.
+
+\fig{forward_bias.png}{1}{How forward bias creates current}{forward_bias}
+
+\paragraph{Diodes Without Current: Reverse Bias}
+
+When we do the opposite and connect the positive terminal of a battery to the \emph{N-side} and the negative terminal of a battery to the \emph{P-side}, this is called \textbf{Reverse Bias}. The negative terminal provides a strong attractive force, pulling positively charged holes away from the center. The positive terminal does the same, pulling negatively charged electrons away from the center. This increases the size of the depletion region, making the possibility of a current even more difficult than at rest. This is illustrated in \ref{fig:reverse_bias}.
+
+\fig{reverse_bias.png}{1}{How reverse bias widens the depletion region}{reverse_bias}
+
+However, conducting current with reverse bias is possible. You just need a strong enough amount of voltage to forcibly rip electrons from their bonds to conduct electricity instead of relying on free charge carriers which have been dragged away. This causes the depletion region to fail, however in the process a standard diode is usually destroyed.
+
+So, when compared to a conductor like copper which can conduct both ways, a diode can practically only conduct electricity in one direction.
+
+\section{Digital Circuits \& Logic}
+
+\subsection{Components}
+
+\subsubsection{Transistors}
 
 \end{document}
